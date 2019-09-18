@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -26,8 +28,7 @@ public class Window extends JFrame {
 		
 		add(MainPanel,BorderLayout.PAGE_START);
 		
-		MainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		
+		MainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));	
 		MainPanel.setLayout(new BoxLayout(MainPanel, BoxLayout.PAGE_AXIS));
 		
 		JLabel lblSearch = new JLabel("Livro:");
@@ -43,6 +44,8 @@ public class Window extends JFrame {
 		pHeader.add(TxtPesquisa,BorderLayout.CENTER);
 		pHeader.add(btnPesquisar, BorderLayout.LINE_END);
 		pack();
+		
+		
 	}
 
 }
