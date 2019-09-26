@@ -7,8 +7,8 @@ public class LivroController {
 	public final static String URL = "jdbc:postgresql:" + DATABASE;
 	public final static String USER = "teste";
 	public final static String PASS = "123456";
-    public String filtro;
-    public String Campo;
+   	public String filtro;
+  	public String Campo;
 
     //Favor validar - Gabriel
     //Testa a conexão com o banco antes de buscar os dados  
