@@ -1,5 +1,10 @@
 package Controller;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class LivroController {
 
     //Favor realizar a conexão (não tenho os dados) - Gabriel
@@ -7,19 +12,24 @@ public class LivroController {
 	public final static String URL = "jdbc:postgresql:" + DATABASE;
 	public final static String USER = "teste";
 	public final static String PASS = "123456";
-   	public String filtro;
-  	public String Campo;
+    public String filtro;
+    public String Campo;
 
     //Favor validar - Gabriel
     //Testa a conexão com o banco antes de buscar os dados  
-    static public void testaConexao() {
-		try(Connection connection = DriverManager.getConnection(URL, USER, PASS)){
+    static public void testaConexao()
+     {
+		try(Connection connection = DriverManager.getConnection(URL, USER, PASS)) 
+        {
 			System.out.println("Conexao feita");
-		} catch(SQLException e) {
-			System.out.println("ERROR: Erro ao tentar conexao");
-			e.printStackTrace();
-		}
-	}
+		} catch(SQLException e)
+        {
+			throw new SQLException("ERROR: Erro ao tentar conexao" + e.printStackTrace());		
+        } catch (ClassNotFoundException e)
+        {
+            throw new ClassNotFoundException("Driver MySql não foi encontrado " + e.getMessage());
+	    }
+    }
 
     //Favor validar - Gabriel
     //Busca Livro sem filtro 
@@ -38,7 +48,8 @@ public class LivroController {
                 " Autor: " + rs.getString(3) + 
                 " Editora: "  + rs.getString(4));
 			}
-		} catch(SQLException e) {
+		} catch(SQLException e) 
+        {
 			e.printStackTrace();
 		}
     }
@@ -67,4 +78,3 @@ public class LivroController {
         }
     }
 }
-
