@@ -1,80 +1,25 @@
 package Controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+
+import DAO.LivroDAO;
+import Model.Livro;
 
 public class LivroController {
-
-    //Favor realizar a conexão (não tenho os dados) - Gabriel
-    public final static String DATABASE = "Teste";
-	public final static String URL = "jdbc:postgresql:" + DATABASE;
-	public final static String USER = "teste";
-	public final static String PASS = "123456";
-    public String filtro;
-    public String Campo;
-
-    //Favor validar - Gabriel
-    //Testa a conexão com o banco antes de buscar os dados  
-    static public void testaConexao()
-     {
-		try(Connection connection = DriverManager.getConnection(URL, USER, PASS)) 
-        {
-			System.out.println("Conexao feita");
-		} catch(SQLException e)
-        {
-			throw new SQLException("ERROR: Erro ao tentar conexao" + e.printStackTrace());		
-        } catch (ClassNotFoundException e)
-        {
-            throw new ClassNotFoundException("Driver MySql não foi encontrado " + e.getMessage());
-	    }
-    }
-
-    //Favor validar - Gabriel
-    //Busca Livro sem filtro 
-    static public void listaLivros() {
-
-		final String query = "SELECT * FROM livros";
-
-        try(Connection connection = DriverManager.getConnection(URL, USER, PASS))
-        {
-			Statement stm = connection.createStatement();
-			ResultSet rs = stm.executeQuery(query);
-			while(rs.next()) {
-				System.out.println(
-                "Nome: " + rs.getString(1) + 
-                " Preço: " + rs.getDouble(2) +
-                " Autor: " + rs.getString(3) + 
-                " Editora: "  + rs.getString(4));
-			}
-		} catch(SQLException e) 
-        {
-			e.printStackTrace();
-		}
-    }
-
-    //Favor validar - Gabriel
-    //Busca Livro especificos
-    static public void buscaLivro() {
-        
-        final String query = "SELECT " + this.filtro + " from livros WHERE " + this.Campo;
-
-        try(Connection connection = DriverManager.getConnection(URL, USER, PASS))
-        {
-            Statement stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery(query);
-            while (rs.next()) 
-            {
-                System.out.println(  
-                "Nome: " + rs.getString(1) + 
-                " Preço: " + rs.getDouble(2) +
-                " Autor: " + rs.getString(3) + 
-                " Editora: "  + rs.getString(4));    
-            }
-        } catch(SQLException e) 
-        {
-            e.printStackTrace();
-        }
-    }
+	
+	private LivroDAO DAO;
+	
+	public LivroController() {
+	DAO = new LivroDAO();
+	}
+	
+	public void ExecutaConexao() {
+		DAO.fazConexao();
+	}
+    
+	public ArrayList<Livro> GetLivrosByNome (String Nome){
+		
+		return DAO.GetLivrosByNome(Nome);
+	}
 }
+

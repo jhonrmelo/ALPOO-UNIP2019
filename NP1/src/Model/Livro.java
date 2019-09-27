@@ -14,4 +14,44 @@ public class Livro {
 		Autor = pAutor;
 		Editora = pEditora;
 	}
+
+
+	public String getNome() {
+		return Nome;
+	}
+
+
+	public void setNome(String nome) {
+		Nome = nome;
+	}
+
+
+	public double getPreco() {
+		return Preco;
+	}
+
+
+	public void setPreco(double preco) {
+		Preco = preco;
+	}
+
+
+	public String getAutor() {
+		return Autor;
+	}
+
+
+	public void setAutor(String autor) {
+		Autor = autor;
+	}
+
+
+	public String getEditora() {
+		return Editora;
+	}
+
+
+	public void setEditora(String editora) {
+		Editora = editora;
+	}
 }
