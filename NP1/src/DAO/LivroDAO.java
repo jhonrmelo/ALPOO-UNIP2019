@@ -15,7 +15,7 @@ public class LivroDAO {
 	public final static String USER = "postgres";
 	public final static String PASS = "jhow";
 
-	static public void fazConexao() {
+	 public void fazConexao() {
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASS)) {
 			System.out.println("Conexao feita");
 		} catch (SQLException e) {

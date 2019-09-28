@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -29,8 +31,9 @@ public class View {
 
 	private JFrame frame;
 	private JTextField txtSearch;
-	private JTable TblLivros;
 	DefaultTableModel dtm = new DefaultTableModel();
+	private JTable tblLivros;
+	private JScrollPane scrollPane;
 
 
 	/**
@@ -90,29 +93,46 @@ public class View {
 		lblFiltroDePesquisa.setBounds(37, 11, 153, 14);
 		PanelPesquisa.add(lblFiltroDePesquisa);
 		
-		Object[] colNames = {"Titulo","Preço","Autore(s)","Editora"};
-		Object[][] data = new Object[0][4];
-		dtm = new DefaultTableModel(data, colNames);
+		JPanel panel = new JPanel();
+		panel.setBounds(10, 91, 539, 250);
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
 		
-		TblLivros = new JTable();
-		TblLivros.setBounds(10, 240, 414, -142);
-		frame.getContentPane().add(TblLivros);
+		tblLivros = new JTable(dtm);
+		tblLivros.setBounds(10, 229, 519, -217);
+		panel.add(tblLivros);
+		
+		scrollPane = new JScrollPane(tblLivros);
+		scrollPane.setBounds(10, 0, 519, 239);
+		panel.add(scrollPane);
+
+			
+		
 			
 	}
 	
-	
 	//Metodos de eventos
 	class BuscaLivros implements ActionListener{
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			tblLivros.setModel(dtm = new DefaultTableModel());
+			
+			dtm.addColumn("Titulo");
+			dtm.addColumn("Preço");	
+			dtm.addColumn("Autore(s)");		
+			dtm.addColumn("Editora");				
+			
+			tblLivros.getColumnModel().getColumn(0).setPreferredWidth(100);
+			tblLivros.getColumnModel().getColumn(1).setPreferredWidth(100);
+			tblLivros.getColumnModel().getColumn(2).setPreferredWidth(100);
+			tblLivros.getColumnModel().getColumn(3).setPreferredWidth(100);
+			
 			LivroController livro = new LivroController();
 			
-			ArrayList<Livro> lstLivro = livro.GetLivrosByNome(txtSearch.getText());
-			
-			for(Livro llvro : lstLivro ) {
-				System.out.println(llvro.getNome());
-			}
-			
+			livro.MontaTabelaLivros(dtm,txtSearch.getText());
+						
 		}
 		
 	}
