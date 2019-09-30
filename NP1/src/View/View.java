@@ -90,7 +90,7 @@ public class View {
 		lblFiltroDePesquisa.setBounds(37, 11, 153, 14);
 		PanelPesquisa.add(lblFiltroDePesquisa);
 		
-		Object[] colNames = {"Titulo","Preço","Autore(s)","Editora"};
+		Object[] colNames = {"Titulo","PreÃ§o","Autore(s)","Editora"};
 		Object[][] data = new Object[0][4];
 		dtm = new DefaultTableModel(data, colNames);
 		
@@ -106,11 +106,14 @@ public class View {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LivroController livro = new LivroController();
+			dtm.setNumRows(0);
 			
 			ArrayList<Livro> lstLivro = livro.GetLivrosByNome(txtSearch.getText());
 			
 			for(Livro llvro : lstLivro ) {
 				System.out.println(llvro.getNome());
+				dtm.addRow(new Object[]{llvro.getNome(), llvro.getPreco(), 
+					llvro.getAutor(), llvro.getEditora()});	
 			}
 			
 		}
