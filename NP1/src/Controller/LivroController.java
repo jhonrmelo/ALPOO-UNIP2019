@@ -2,6 +2,8 @@ package Controller;
 
 import java.util.ArrayList;
 
+import javax.swing.table.DefaultTableModel;
+
 import DAO.LivroDAO;
 import Model.Livro;
 
@@ -20,6 +22,18 @@ public class LivroController {
 	public ArrayList<Livro> GetLivrosByNome (String Nome){
 		
 		return DAO.GetLivrosByNome(Nome);
+	}
+	
+	
+	public void MontaTabelaLivros(DefaultTableModel dtm, String Busca) {
+		
+		ArrayList<Livro> lstLivro = GetLivrosByNome(Busca);
+		dtm.setNumRows(0);
+		
+		for(Livro llivro : lstLivro) {
+			dtm.addRow(new Object[] {llivro.getNome(), llivro.getPreco(), llivro.getAutor(),llivro.getEditora()});		
+		}
+		
 	}
 }
 
