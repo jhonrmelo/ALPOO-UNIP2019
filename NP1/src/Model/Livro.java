@@ -27,6 +27,7 @@ public class Livro {
 
 
 	public double getPreco() {
+		
 		return Preco;
 	}
 
