@@ -1,4 +1,4 @@
-package DAO;
+package dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,27 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Model.Livro;
+import model.Livro;
+import util.SqlConnection;
 
-public class LivroDAO {
-	public final static String DATABASE = "JavaProjectNP1";
-	public final static String URL = "jdbc:postgresql:" + DATABASE;
-	public final static String USER = "postgres";
-	public final static String PASS = "jhow";
 
-	 public void fazConexao() {
-		try (Connection connection = DriverManager.getConnection(URL, USER, PASS)) {
-			System.out.println("Conexao feita");
-		} catch (SQLException e) {
-			System.out.println("ERROR: Erro ao tentar conexao");
-			e.printStackTrace();
-		}
-	}
-
+public class livrariaDAO {
 	public ArrayList<Livro> GetLivrosByNome(String nome) {
 
 		ArrayList<Livro> lstLivro = new ArrayList<Livro>();
-		try (Connection connection = DriverManager.getConnection(URL, USER, PASS)) {
+		
+		try (Connection connection =  SqlConnection.GetConnection()) {
 
 			final String SqlQuery = "SELECT BKS.TITLE,BKS.PRICE, STRING_AGG(AUTH.FNAME || ' ' || AUTH.NAME,'; ') AS AUTHORNAME, PS.NAME AS PUBLISHERNAME "
 									+ "FROM BOOKS BKS "
