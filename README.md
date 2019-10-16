@@ -3,7 +3,7 @@
 
 - Trabalho executado na linguagem de programação JAVA com o uso do banco de dados PostgreSQL.
 - A principal função do sistema é um CRUD onde é possivel administrar os registros relacionados a uma livaria Ficticia. 
-- Projeto desenolvido apenas com fins acadêmicos.
+- Projeto desenvolvido apenas com fins acadêmicos.
 
  <h3> COLABORADORES <H3> 
  <span>  Gabriel Souza, Github: @gabrielpsouza. </span> <br/>
