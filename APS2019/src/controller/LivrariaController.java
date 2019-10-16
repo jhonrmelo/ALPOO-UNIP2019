@@ -12,15 +12,18 @@ import org.w3c.dom.events.MouseEvent;
 import dao.livrariaDAO;
 import model.Livro;
 import view.ViewInitialPage;
+import view.viewPnlMenu;
 
 public class LivrariaController {
 
 	private ViewInitialPage _ViewInitialPage;
+	private viewPnlMenu _viewPnlMenu;
 	private livrariaDAO _LivrariaDAO;
 
 	public LivrariaController() {
 		_ViewInitialPage = new ViewInitialPage();
 		_LivrariaDAO = new livrariaDAO();
+		
 		_ViewInitialPage.SetChangeCardAction(new SetCardVisible());
 		_ViewInitialPage.SetActionListenerSearchButton(new SearchBooks());
 
