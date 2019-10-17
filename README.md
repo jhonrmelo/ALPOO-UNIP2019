@@ -6,6 +6,6 @@
 - Projeto desenvolvido apenas com fins acadêmicos.
 
  <h3> COLABORADORES <H3> 
- <span>  Gabriel Souza, Github: @gabrielpsouza. </span> <br/>
+ <span>  Gabriel Souza, Github:<a href= https://github.com/gabrielpsouza> @gabrielpsouza. </span> </a> <br/>
  <span> Victor Rodriguez, Github: @VictorRodrigues145. </span> <br/>
  <span> Thiago Melo, Github: @ThiaguinhoMeloo. </span> <br/>
