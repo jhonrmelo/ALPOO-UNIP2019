@@ -1,18 +1,30 @@
 package model;
 
 public class Livro {
+	private String isbn;
 	private String Nome;
 	private double Preco;
 	private String Autor;
 	private String Editora;
 	
 	
-	public Livro(String pNome, double pPreco, String pAutor, String pEditora) {
+	public Livro(String pIsbn,String pNome, double pPreco, String pAutor, String pEditora) {
 		
+		isbn = pIsbn;
 		Nome  = pNome;
 		Preco = pPreco;
 		Autor = pAutor;
 		Editora = pEditora;
+	}
+
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
 	}
 
 

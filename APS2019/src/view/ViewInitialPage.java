@@ -353,34 +353,35 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
-		Object[] colNames = { "Nome", "Autores", "Editora", "Preço", "", "", "" };
-		Object[][] data = new Object[0][7];
+		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
+		Object[][] data = new Object[0][8];
 		dtm = new DefaultTableModel(data, colNames);
 
 		tblLivros.setModel(dtm);
 
 		tblLivros.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png");
-		JtableButton btnDetails = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\Details.png");
+		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
+		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
+		JtableButton btnDetails = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\Details.png", "btnDetalhes");
 
-		tblLivros.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblLivros.getColumnModel().getColumn(4).setPreferredWidth(10);
 		tblLivros.getColumnModel().getColumn(5).setPreferredWidth(10);
 		tblLivros.getColumnModel().getColumn(6).setPreferredWidth(10);
+		tblLivros.getColumnModel().getColumn(7).setPreferredWidth(10);
 
 		dtm.setNumRows(0);
 
 		for (Livro lLivro : lstLivros) {
-			Object[] dados = new Object[7];
-			dados[0] = lLivro.getNome();
-			dados[1] = lLivro.getAutor();
-			dados[2] = lLivro.getEditora();
-			dados[3] = lLivro.getPreco();
-			dados[4] = btnEdit;
-			dados[5] = btnExclude;
-			dados[6] = btnDetails;
+			Object[] dados = new Object[8];
+			dados[0] = lLivro.getIsbn();
+			dados[1] = lLivro.getNome();
+			dados[2] = lLivro.getAutor();
+			dados[3] = lLivro.getEditora();
+			dados[4] = lLivro.getPreco();
+			dados[5] = btnEdit;
+			dados[6] = btnExclude;
+			dados[7] = btnDetails;
 
 			dtm.addRow(dados);
 		}
@@ -389,27 +390,28 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableAutores(ArrayList<Autor> lstAutor) {
 
-		Object[] colNames = { "Nome", "Sobrenome", "", "" };
-		Object[][] data = new Object[0][4];
+		Object[] colNames = { "ID","Nome", "Sobrenome", "", "" };
+		Object[][] data = new Object[0][5];
 		dtm = new DefaultTableModel(data, colNames);
 
 		tblAutores.setModel(dtm);
 		tblAutores.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png");
+		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
+		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
 
-		tblAutores.getColumnModel().getColumn(2).setPreferredWidth(10);
 		tblAutores.getColumnModel().getColumn(3).setPreferredWidth(10);
+		tblAutores.getColumnModel().getColumn(4).setPreferredWidth(10);
 
 		dtm.setNumRows(0);
 
 		for (Autor lAutor : lstAutor) {
-			Object[] dados = new Object[4];
-			dados[0] = lAutor.getFname();
-			dados[1] = lAutor.getName();
-			dados[2] = btnEdit;
-			dados[3] = btnExclude;
+			Object[] dados = new Object[5];
+			dados[0] = lAutor.getAuthorID();
+			dados[1] = lAutor.getFname();
+			dados[2] = lAutor.getName();
+			dados[3] = btnEdit;
+			dados[4] = btnExclude;
 			dtm.addRow(dados);
 		}
 		autoresScrollPane.setVisible(true);
@@ -418,34 +420,47 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableEditora(ArrayList<Editora> lstEditoras) {
 
-		Object[] colNames = { "Nome", "Url", "", "" };
-		Object[][] data = new Object[0][4];
+		Object[] colNames = {"ID" ,"Nome", "Url", "", "" };
+		Object[][] data = new Object[0][5];
 		dtm = new DefaultTableModel(data, colNames);
 
 		tblEditora.setModel(dtm);
 		tblEditora.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png");
+		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
+		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
 
-		tblEditora.getColumnModel().getColumn(2).setPreferredWidth(10);
 		tblEditora.getColumnModel().getColumn(3).setPreferredWidth(10);
+		tblEditora.getColumnModel().getColumn(4).setPreferredWidth(10);
 
 		dtm.setNumRows(0);
 
 		for (Editora lEditora : lstEditoras) {
-			Object[] dados = new Object[4];
-			dados[0] = lEditora.getName();
-			dados[1] = lEditora.getUrl();
-			dados[2] = btnEdit;
-			dados[3] = btnExclude;
+			Object[] dados = new Object[5];
+			dados[0] = lEditora.getPublisher_id();
+			dados[1] = lEditora.getName();
+			dados[2] = lEditora.getUrl();
+			dados[3] = btnEdit;
+			dados[4] = btnExclude;
 			dtm.addRow(dados);
 		}
 		EditoraScrollPane.setVisible(true);
-
 	}
-
+	
 	public JTable getTblLivro() {
 		return tblLivros;
+	}
+
+	
+	public Livro getLivroBySelectedRow() {
+	int linhaSelectionada = tblLivros.getSelectedRow();
+	
+	String ISBN = dtm.getValueAt(linhaSelectionada, 0).toString();
+	String Nome = dtm.getValueAt(linhaSelectionada, 1).toString();
+	String Autores = dtm.getValueAt(linhaSelectionada, 2).toString();
+	String Editora = dtm.getValueAt(linhaSelectionada, 3).toString();
+	double Preco = (double) dtm.getValueAt(linhaSelectionada, 4);
+	
+	return new Livro(ISBN, Nome, Preco, Autores, Editora);
 	}
 }

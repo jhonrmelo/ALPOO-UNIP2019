@@ -20,18 +20,18 @@ public class livrariaDAO {
 
 		try (Connection connection = SqlConnection.GetConnection()) {
 
-			final String SqlQuery = "SELECT BKS.TITLE,BKS.PRICE, STRING_AGG(AUTH.FNAME || ' ' || AUTH.NAME,'; ') AS AUTHORNAME, PS.NAME AS PUBLISHERNAME "
+			final String SqlQuery = "SELECT BKS.ISBN ,BKS.TITLE,BKS.PRICE, STRING_AGG(AUTH.FNAME || ' ' || AUTH.NAME,'; ') AS AUTHORNAME, PS.NAME AS PUBLISHERNAME "
 					+ "FROM BOOKS BKS " + "JOIN BOOKSAUTHORS BA ON BA.ISBN =  BKS.ISBN "
 					+ "JOIN AUTHORS AUTH ON AUTH.AUTHOR_ID = BA.AUTHOR_ID "
 					+ "JOIN PUBLISHERS PS ON PS.PUBLISHER_ID = BKS.PUBLISHER_ID " + "WHERE TITLE ILIKE LOWER(?)"
-					+ "GROUP BY BKS.TITLE, BKS.PRICE, PS.NAME ";
+					+ "GROUP BY  BKS.ISBN ,BKS.TITLE, BKS.PRICE, PS.NAME ";
 
 			PreparedStatement pstm = connection.prepareStatement(SqlQuery);
 			pstm.setString(1, "%" + nome + "%");
 			ResultSet rs = pstm.executeQuery();
 
 			while (rs.next()) {
-				Livro livro = new Livro(rs.getString("TITLE"), rs.getDouble("PRICE"), rs.getString("AUTHORNAME"),
+				Livro livro = new Livro(rs.getString("isbn"),rs.getString("TITLE"), rs.getDouble("PRICE"), rs.getString("AUTHORNAME"),
 						rs.getString("PUBLISHERNAME"));
 				lstLivro.add(livro);
 			}

@@ -18,11 +18,13 @@ import model.Autor;
 import model.Editora;
 import model.Livro;
 import view.ViewInitialPage;
+import view.viewBookDetail;
 
 public class LivrariaController {
 
 	private ViewInitialPage _ViewInitialPage;
 	private livrariaDAO _LivrariaDAO;
+	private viewBookDetail _viewBookDetail;
 
 	public LivrariaController() {
 		_ViewInitialPage = new ViewInitialPage();
@@ -95,7 +97,13 @@ public class LivrariaController {
 				if (value instanceof JButton) {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
-					System.out.println("pinto");
+					if(button.getName() == "btnDetalhes" && e.getClickCount() == 1) {
+						Livro llivro =  _ViewInitialPage.getLivroBySelectedRow();
+						_viewBookDetail = new viewBookDetail();
+						_viewBookDetail.SetDetails(llivro);
+						_viewBookDetail.SetTableAuthor(llivro.getAutor().split(";"));
+										
+					}
 				}
 			}
 		}
