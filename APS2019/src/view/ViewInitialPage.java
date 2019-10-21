@@ -16,6 +16,7 @@ import model.Editora;
 import model.JtableButton;
 import model.RenderTable;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
@@ -51,7 +52,9 @@ public class ViewInitialPage extends JFrame {
 	JButton btnPesquisarAutor;
 	JButton btnPesquisaEditora;
 	JTextField txtBuscaLivros;
-	DefaultTableModel dtm = new DefaultTableModel();
+	DefaultTableModel dtmBooks = new DefaultTableModel();
+	DefaultTableModel dtmAuthors = new DefaultTableModel();
+	DefaultTableModel dtmPublisher = new DefaultTableModel();
 	JButton btnPesquisarLivro;
 	JTable tblLivros;
 	JScrollPane BookscrollPane;
@@ -63,6 +66,10 @@ public class ViewInitialPage extends JFrame {
 	JScrollPane EditoraScrollPane;
 
 	public ViewInitialPage() {
+
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width / 2 - getSize().width, dim.height / 2 - getSize().height / 2);
+
 		setForeground(new Color(0, 128, 128));
 		setIconImage(Toolkit.getDefaultToolkit().getImage("D:\\NP12019\\APS2019\\imgs\\Book-Blank-Book-icon.png"));
 		setTitle("Livraria");
@@ -174,17 +181,17 @@ public class ViewInitialPage extends JFrame {
 		rdbtnNewRadioButton.setSelected(true);
 		rdbtnNewRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		rdbtnNewRadioButton.setBackground(SystemColor.controlHighlight);
-		rdbtnNewRadioButton.setBounds(10, 35, 70, 23);
+		rdbtnNewRadioButton.setBounds(101, 38, 70, 23);
 		pnlBuscaLivros.add(rdbtnNewRadioButton);
 
 		JRadioButton rdbtnAutor = new JRadioButton("Autor");
 		rdbtnAutor.setBackground(SystemColor.controlHighlight);
-		rdbtnAutor.setBounds(82, 36, 62, 23);
+		rdbtnAutor.setBounds(173, 39, 62, 23);
 		pnlBuscaLivros.add(rdbtnAutor);
 
 		JRadioButton rdbtnEditora = new JRadioButton("Editora");
 		rdbtnEditora.setBackground(SystemColor.controlHighlight);
-		rdbtnEditora.setBounds(146, 36, 109, 23);
+		rdbtnEditora.setBounds(237, 39, 109, 23);
 		pnlBuscaLivros.add(rdbtnEditora);
 
 		btnPesquisarLivro = new JButton("Pesquisar");
@@ -204,6 +211,11 @@ public class ViewInitialPage extends JFrame {
 		tblLivros.setRowHeight(40);
 
 		pnlBuscaLivros.add(btnPesquisarLivro);
+		
+		JLabel lblBuscarPor = new JLabel("Buscar Por:");
+		lblBuscarPor.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblBuscarPor.setBounds(10, 41, 85, 16);
+		pnlBuscaLivros.add(lblBuscarPor);
 
 		BookscrollPane = new JScrollPane(tblLivros);
 		BookscrollPane.setBounds(0, 106, 752, 536);
@@ -292,9 +304,16 @@ public class ViewInitialPage extends JFrame {
 		txtBuscaEditora.setColumns(10);
 
 		btnPesquisaEditora = new JButton("Pesquisar");
+		btnPesquisaEditora.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnPesquisaEditora.setBounds(407, 61, 132, 23);
 		pnlBuscaEditora.add(btnPesquisaEditora);
 		btnPesquisaEditora.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Search.png"));
+		
+		JButton btnCadastrarEditora = new JButton("Cadastrar");
+		btnCadastrarEditora.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\add.png"));
+		btnCadastrarEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnCadastrarEditora.setBounds(549, 61, 132, 23);
+		pnlBuscaEditora.add(btnCadastrarEditora);
 
 		cardLayout = (CardLayout) (pnlCards.getLayout());
 
@@ -355,9 +374,9 @@ public class ViewInitialPage extends JFrame {
 
 		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
 		Object[][] data = new Object[0][8];
-		dtm = new DefaultTableModel(data, colNames);
+		dtmBooks = new DefaultTableModel(data, colNames);
 
-		tblLivros.setModel(dtm);
+		tblLivros.setModel(dtmBooks);
 
 		tblLivros.setDefaultRenderer(Object.class, new RenderTable());
 
@@ -370,7 +389,7 @@ public class ViewInitialPage extends JFrame {
 		tblLivros.getColumnModel().getColumn(6).setPreferredWidth(10);
 		tblLivros.getColumnModel().getColumn(7).setPreferredWidth(10);
 
-		dtm.setNumRows(0);
+		dtmBooks.setNumRows(0);
 
 		for (Livro lLivro : lstLivros) {
 			Object[] dados = new Object[8];
@@ -383,18 +402,18 @@ public class ViewInitialPage extends JFrame {
 			dados[6] = btnExclude;
 			dados[7] = btnDetails;
 
-			dtm.addRow(dados);
+			dtmBooks.addRow(dados);
 		}
 		BookscrollPane.setVisible(true);
 	}
 
 	public void MontaTableAutores(ArrayList<Autor> lstAutor) {
 
-		Object[] colNames = { "ID","Nome", "Sobrenome", "", "" };
+		Object[] colNames = { "ID", "Nome", "Sobrenome", "", "" };
 		Object[][] data = new Object[0][5];
-		dtm = new DefaultTableModel(data, colNames);
+		dtmAuthors = new DefaultTableModel(data, colNames);
 
-		tblAutores.setModel(dtm);
+		tblAutores.setModel(dtmAuthors);
 		tblAutores.setDefaultRenderer(Object.class, new RenderTable());
 
 		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
@@ -403,7 +422,7 @@ public class ViewInitialPage extends JFrame {
 		tblAutores.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblAutores.getColumnModel().getColumn(4).setPreferredWidth(10);
 
-		dtm.setNumRows(0);
+		dtmAuthors.setNumRows(0);
 
 		for (Autor lAutor : lstAutor) {
 			Object[] dados = new Object[5];
@@ -412,7 +431,7 @@ public class ViewInitialPage extends JFrame {
 			dados[2] = lAutor.getName();
 			dados[3] = btnEdit;
 			dados[4] = btnExclude;
-			dtm.addRow(dados);
+			dtmAuthors.addRow(dados);
 		}
 		autoresScrollPane.setVisible(true);
 
@@ -420,11 +439,11 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableEditora(ArrayList<Editora> lstEditoras) {
 
-		Object[] colNames = {"ID" ,"Nome", "Url", "", "" };
+		Object[] colNames = { "ID", "Nome", "Url", "", "" };
 		Object[][] data = new Object[0][5];
-		dtm = new DefaultTableModel(data, colNames);
+		dtmPublisher = new DefaultTableModel(data, colNames);
 
-		tblEditora.setModel(dtm);
+		tblEditora.setModel(dtmPublisher);
 		tblEditora.setDefaultRenderer(Object.class, new RenderTable());
 
 		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
@@ -433,7 +452,7 @@ public class ViewInitialPage extends JFrame {
 		tblEditora.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblEditora.getColumnModel().getColumn(4).setPreferredWidth(10);
 
-		dtm.setNumRows(0);
+		dtmPublisher.setNumRows(0);
 
 		for (Editora lEditora : lstEditoras) {
 			Object[] dados = new Object[5];
@@ -442,25 +461,24 @@ public class ViewInitialPage extends JFrame {
 			dados[2] = lEditora.getUrl();
 			dados[3] = btnEdit;
 			dados[4] = btnExclude;
-			dtm.addRow(dados);
+			dtmPublisher.addRow(dados);
 		}
 		EditoraScrollPane.setVisible(true);
 	}
-	
+
 	public JTable getTblLivro() {
 		return tblLivros;
 	}
 
-	
 	public Livro getLivroBySelectedRow() {
-	int linhaSelectionada = tblLivros.getSelectedRow();
-	
-	String ISBN = dtm.getValueAt(linhaSelectionada, 0).toString();
-	String Nome = dtm.getValueAt(linhaSelectionada, 1).toString();
-	String Autores = dtm.getValueAt(linhaSelectionada, 2).toString();
-	String Editora = dtm.getValueAt(linhaSelectionada, 3).toString();
-	double Preco = (double) dtm.getValueAt(linhaSelectionada, 4);
-	
-	return new Livro(ISBN, Nome, Preco, Autores, Editora);
+		int linhaSelectionada = tblLivros.getSelectedRow();
+
+		String ISBN = dtmBooks.getValueAt(linhaSelectionada, 0).toString();
+		String Nome = dtmBooks.getValueAt(linhaSelectionada, 1).toString();
+		String Autores = dtmBooks.getValueAt(linhaSelectionada, 2).toString();
+		String Editora = dtmBooks.getValueAt(linhaSelectionada, 3).toString();
+		double Preco = (double) dtmBooks.getValueAt(linhaSelectionada, 4);
+
+		return new Livro(ISBN, Nome, Preco, Autores, Editora);
 	}
 }

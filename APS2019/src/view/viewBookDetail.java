@@ -11,6 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import model.Livro;
 
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -31,6 +33,11 @@ public class viewBookDetail extends JFrame {
 	JScrollPane scrollPane;
 
 	public viewBookDetail() {
+		setTitle("Detalhe Livro");
+
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width / 2 - getSize().width, dim.height / 2 - getSize().height / 2);
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage("D:\\NP12019\\APS2019\\imgs\\Details.png"));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 436, 284);
@@ -108,7 +115,7 @@ public class viewBookDetail extends JFrame {
 
 	public void SetDetails(Livro pLivro) {
 		txtnome.setText(pLivro.getNome());
-		txtPreco.setText(String.format("%.02f", pLivro.getPreco()));
+		txtPreco.setText("R$ " + String.format("%.02f", pLivro.getPreco()));
 		txtEditora.setText(pLivro.getEditora());
 		txtISBN.setText(pLivro.getIsbn());
 	}

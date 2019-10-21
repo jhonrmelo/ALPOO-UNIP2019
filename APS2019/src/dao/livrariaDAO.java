@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
 import model.Autor;
 import model.Editora;
 import model.Livro;
@@ -31,8 +30,8 @@ public class livrariaDAO {
 			ResultSet rs = pstm.executeQuery();
 
 			while (rs.next()) {
-				Livro livro = new Livro(rs.getString("isbn"),rs.getString("TITLE"), rs.getDouble("PRICE"), rs.getString("AUTHORNAME"),
-						rs.getString("PUBLISHERNAME"));
+				Livro livro = new Livro(rs.getString("isbn"), rs.getString("TITLE"), rs.getDouble("PRICE"),
+						rs.getString("AUTHORNAME"), rs.getString("PUBLISHERNAME"));
 				lstLivro.add(livro);
 			}
 
@@ -51,16 +50,17 @@ public class livrariaDAO {
 		try (Connection connection = SqlConnection.GetConnection()) {
 
 			final String sqlQuery = "SELECT AUTHOR_ID AS  ID, FNAME AS  NOME, NAME AS SOBRENOME " + 
-									 "FROM AUTHORS AUTH " + 
-									 "WHERE NAME LIKE (?) OR FNAME LIKE (?)";
-				
+									"FROM AUTHORS AUTH "
+								  + "WHERE NAME LIKE (?) OR FNAME LIKE (?) " 
+								  + "ORDER BY AUTHOR_ID";
+
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setString(1, "%" + nome + "%");
 			pstm.setString(2, "%" + nome + "%");
 			ResultSet rs = pstm.executeQuery();
 
 			while (rs.next()) {
-				Autor autor = new Autor(rs.getInt("Id"), rs.getString("sobrenome"), rs.getString("nome") );
+				Autor autor = new Autor(rs.getInt("Id"), rs.getString("sobrenome"), rs.getString("nome"));
 				lstAuthrors.add(autor);
 			}
 
@@ -78,9 +78,10 @@ public class livrariaDAO {
 
 		try (Connection connection = SqlConnection.GetConnection()) {
 
-			final String sqlQuery = "SELECT PUBLISHER_ID AS ID,  NAME AS NOME, URL " + 
-								     "FROM PUBLISHERS " + 
-								     "WHERE NAME ILIKE (?)";
+			final String sqlQuery = " SELECT PUBLISHER_ID AS ID,  NAME AS NOME, URL " 
+							       + "FROM PUBLISHERS "
+								   + "WHERE NAME ILIKE (?)"
+								   + "ORDER BY PUBLISHER_ID";
 
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setString(1, "%" + nome + "%");
