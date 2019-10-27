@@ -25,6 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Button;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
@@ -40,6 +43,7 @@ import javax.swing.JTable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JComboBox;
 
 public class ViewInitialPage extends JFrame {
 
@@ -64,6 +68,9 @@ public class ViewInitialPage extends JFrame {
 	JTable tblAutores;
 	JTable tblEditora;
 	JScrollPane EditoraScrollPane;
+	JButton btnCadastrarEditora;
+	JComboBox cbbAutor;
+	JComboBox cbbEditora;
 
 	public ViewInitialPage() {
 
@@ -71,7 +78,8 @@ public class ViewInitialPage extends JFrame {
 		this.setLocation(dim.width / 2 - getSize().width, dim.height / 2 - getSize().height / 2);
 
 		setForeground(new Color(0, 128, 128));
-		setIconImage(Toolkit.getDefaultToolkit().getImage("D:\\NP12019\\APS2019\\imgs\\Book-Blank-Book-icon.png"));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(ViewInitialPage.class.getResource("/imgs/Book-Blank-Book-icon.png")));
 		setTitle("Livraria");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -119,7 +127,7 @@ public class ViewInitialPage extends JFrame {
 		JLabel lblimgLivros = new JLabel("");
 		lblimgLivros.setBounds(26, 191, 48, 42);
 		pnlMenu.add(lblimgLivros);
-		lblimgLivros.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Book-Blank-Book-icon.png"));
+		lblimgLivros.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Book-Blank-Book-icon.png")));
 
 		btnAutores = new JButton("Autores");
 		btnAutores.setForeground(new Color(0, 0, 0));
@@ -138,16 +146,16 @@ public class ViewInitialPage extends JFrame {
 		JLabel lblimgAutores = new JLabel("");
 		lblimgAutores.setBounds(26, 244, 48, 32);
 		pnlMenu.add(lblimgAutores);
-		lblimgAutores.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\authors.png"));
+		lblimgAutores.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/authors.png")));
 
 		JLabel lblimgEditoras = new JLabel("");
 		lblimgEditoras.setBounds(26, 293, 48, 45);
 		pnlMenu.add(lblimgEditoras);
-		lblimgEditoras.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Editora.png"));
+		lblimgEditoras.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Editora.png")));
 
 		JLabel lblNewLabel = new JLabel("New label");
-		lblNewLabel
-				.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\76b8379d-9bb8-4b95-a7b0-649773a2d888_200x200.png"));
+		lblNewLabel.setIcon(new ImageIcon(
+				ViewInitialPage.class.getResource("/imgs/76b8379d-9bb8-4b95-a7b0-649773a2d888_200x200.png")));
 		lblNewLabel.setBounds(40, 11, 205, 174);
 		pnlMenu.add(lblNewLabel);
 
@@ -168,7 +176,7 @@ public class ViewInitialPage extends JFrame {
 		pnlBuscaLivros.setLayout(null);
 
 		txtBuscaLivros = new JTextField();
-		txtBuscaLivros.setBounds(10, 62, 387, 20);
+		txtBuscaLivros.setBounds(10, 62, 296, 20);
 		pnlBuscaLivros.add(txtBuscaLivros);
 		txtBuscaLivros.setColumns(10);
 
@@ -177,27 +185,10 @@ public class ViewInitialPage extends JFrame {
 		pnlBuscaLivros.add(lblTituloLivro);
 		lblTituloLivro.setFont(new Font("Tahoma", Font.BOLD, 16));
 
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("Livro");
-		rdbtnNewRadioButton.setSelected(true);
-		rdbtnNewRadioButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rdbtnNewRadioButton.setBackground(SystemColor.controlHighlight);
-		rdbtnNewRadioButton.setBounds(101, 38, 70, 23);
-		pnlBuscaLivros.add(rdbtnNewRadioButton);
-
-		JRadioButton rdbtnAutor = new JRadioButton("Autor");
-		rdbtnAutor.setBackground(SystemColor.controlHighlight);
-		rdbtnAutor.setBounds(173, 39, 62, 23);
-		pnlBuscaLivros.add(rdbtnAutor);
-
-		JRadioButton rdbtnEditora = new JRadioButton("Editora");
-		rdbtnEditora.setBackground(SystemColor.controlHighlight);
-		rdbtnEditora.setBounds(237, 39, 109, 23);
-		pnlBuscaLivros.add(rdbtnEditora);
-
 		btnPesquisarLivro = new JButton("Pesquisar");
 		btnPesquisarLivro.setForeground(Color.BLACK);
-		btnPesquisarLivro.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Search.png"));
-		btnPesquisarLivro.setBounds(407, 61, 132, 23);
+		btnPesquisarLivro.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Search.png")));
+		btnPesquisarLivro.setBounds(610, 61, 132, 23);
 
 		tblLivros = new JTable() {
 			@Override
@@ -211,11 +202,29 @@ public class ViewInitialPage extends JFrame {
 		tblLivros.setRowHeight(40);
 
 		pnlBuscaLivros.add(btnPesquisarLivro);
-		
-		JLabel lblBuscarPor = new JLabel("Buscar Por:");
-		lblBuscarPor.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblBuscarPor.setBounds(10, 41, 85, 16);
-		pnlBuscaLivros.add(lblBuscarPor);
+
+		cbbEditora = new JComboBox();
+		cbbEditora.setBounds(316, 61, 137, 22);
+		pnlBuscaLivros.add(cbbEditora);
+
+		JLabel lblNome = new JLabel("Nome:");
+		lblNome.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblNome.setBounds(10, 45, 48, 14);
+		pnlBuscaLivros.add(lblNome);
+
+		JLabel lblEditora = new JLabel("Editora:");
+		lblEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblEditora.setBounds(317, 46, 52, 14);
+		pnlBuscaLivros.add(lblEditora);
+
+		cbbAutor = new JComboBox();
+		cbbAutor.setBounds(463, 61, 137, 22);
+		pnlBuscaLivros.add(cbbAutor);
+
+		JLabel lblAutor = new JLabel("Autor:");
+		lblAutor.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblAutor.setBounds(463, 46, 48, 14);
+		pnlBuscaLivros.add(lblAutor);
 
 		BookscrollPane = new JScrollPane(tblLivros);
 		BookscrollPane.setBounds(0, 106, 752, 536);
@@ -247,7 +256,7 @@ public class ViewInitialPage extends JFrame {
 		btnPesquisarAutor = new JButton("Pesquisar");
 		btnPesquisarAutor.setBounds(407, 61, 132, 23);
 		pnlBuscaAutores.add(btnPesquisarAutor);
-		btnPesquisarAutor.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Search.png"));
+		btnPesquisarAutor.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Search.png")));
 
 		tblAutores = new JTable() {
 			@Override
@@ -307,10 +316,10 @@ public class ViewInitialPage extends JFrame {
 		btnPesquisaEditora.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnPesquisaEditora.setBounds(407, 61, 132, 23);
 		pnlBuscaEditora.add(btnPesquisaEditora);
-		btnPesquisaEditora.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\Search.png"));
-		
-		JButton btnCadastrarEditora = new JButton("Cadastrar");
-		btnCadastrarEditora.setIcon(new ImageIcon("D:\\NP12019\\APS2019\\imgs\\add.png"));
+		btnPesquisaEditora.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Search.png")));
+
+		btnCadastrarEditora = new JButton("Cadastrar");
+		btnCadastrarEditora.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/add.png")));
 		btnCadastrarEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnCadastrarEditora.setBounds(549, 61, 132, 23);
 		pnlBuscaEditora.add(btnCadastrarEditora);
@@ -326,6 +335,13 @@ public class ViewInitialPage extends JFrame {
 
 		BookscrollPane.setVisible(false);
 		autoresScrollPane.setVisible(false);
+
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		int x = (screenSize.width - getWidth()) / 2;
+		int y = (screenSize.height - getHeight()) / 2;
+		setLocation(x, y);
+		setLocationRelativeTo(null);
 
 		cardLayout.show(pnlCards, "InitialPanel");
 
@@ -370,6 +386,10 @@ public class ViewInitialPage extends JFrame {
 		tblLivros.addMouseListener(msa);
 	}
 
+	public void AddActionListenerBtnInsertEditora(ActionListener act) {
+		btnCadastrarEditora.addActionListener(act);
+	}
+
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
 		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
@@ -380,9 +400,12 @@ public class ViewInitialPage extends JFrame {
 
 		tblLivros.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
-		JtableButton btnDetails = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\Details.png", "btnDetalhes");
+		JtableButton btnEdit = new JtableButton("btnEditar");
+		btnEdit.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/edit.png")));
+		JtableButton btnExclude = new JtableButton("btnExcluir");
+		btnExclude.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/ExcludeIcon.png")));
+		JtableButton btnDetails = new JtableButton("btnDetalhes");
+		btnDetails.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Details.png")));
 
 		tblLivros.getColumnModel().getColumn(4).setPreferredWidth(10);
 		tblLivros.getColumnModel().getColumn(5).setPreferredWidth(10);
@@ -416,8 +439,10 @@ public class ViewInitialPage extends JFrame {
 		tblAutores.setModel(dtmAuthors);
 		tblAutores.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
+		JtableButton btnEdit = new JtableButton("btnEditar");
+		btnEdit.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/edit.png")));
+		JtableButton btnExclude = new JtableButton("btnExcluir");
+		btnExclude.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/ExcludeIcon.png")));
 
 		tblAutores.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblAutores.getColumnModel().getColumn(4).setPreferredWidth(10);
@@ -446,8 +471,10 @@ public class ViewInitialPage extends JFrame {
 		tblEditora.setModel(dtmPublisher);
 		tblEditora.setDefaultRenderer(Object.class, new RenderTable());
 
-		JtableButton btnEdit = new JtableButton("D:\\NP12019\\APS2019\\imgs\\edit.png", "btnEditar");
-		JtableButton btnExclude = new JtableButton("D:\\\\NP12019\\\\APS2019\\\\imgs\\\\ExcludeIcon.png", "btnExcluir");
+		JtableButton btnEdit = new JtableButton("btnEditar");
+		btnEdit.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/edit.png")));
+		JtableButton btnExclude = new JtableButton("btnExcluir");
+		btnExclude.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/ExcludeIcon.png")));
 
 		tblEditora.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblEditora.getColumnModel().getColumn(4).setPreferredWidth(10);
@@ -481,4 +508,28 @@ public class ViewInitialPage extends JFrame {
 
 		return new Livro(ISBN, Nome, Preco, Autores, Editora);
 	}
+
+	public void SearchAfterActionPublisher() {
+		txtBuscaEditora.setText("");
+		btnPesquisaEditora.doClick();
+	}
+
+	public void SearchAfterActionBooks() {
+		txtBuscaLivros.setText("");
+		btnPesquisarLivro.doClick();
+	}
+
+	public void LoadComboboxSearch(ArrayList<String> Editoras, ArrayList<String> Autores) {
+
+		Editoras.add("Todos");
+		Autores.add("Todos");
+		Object[] ArrayEditoras = Editoras.toArray();
+		Object[] ArrayAutores = Autores.toArray();
+
+		cbbEditora.setModel(new DefaultComboBoxModel(ArrayEditoras));
+		cbbAutor.setModel(new DefaultComboBoxModel(ArrayAutores));
+		cbbAutor.setSelectedItem("Todos");
+		cbbEditora.setSelectedItem("Todos");
+	}
+
 }

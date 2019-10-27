@@ -49,10 +49,8 @@ public class livrariaDAO {
 
 		try (Connection connection = SqlConnection.GetConnection()) {
 
-			final String sqlQuery = "SELECT AUTHOR_ID AS  ID, FNAME AS  NOME, NAME AS SOBRENOME " + 
-									"FROM AUTHORS AUTH "
-								  + "WHERE NAME LIKE (?) OR FNAME LIKE (?) " 
-								  + "ORDER BY AUTHOR_ID";
+			final String sqlQuery = "SELECT AUTHOR_ID AS  ID, FNAME AS  NOME, NAME AS SOBRENOME " + "FROM AUTHORS AUTH "
+					+ "WHERE NAME LIKE (?) OR FNAME LIKE (?) " + "ORDER BY AUTHOR_ID";
 
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setString(1, "%" + nome + "%");
@@ -78,10 +76,8 @@ public class livrariaDAO {
 
 		try (Connection connection = SqlConnection.GetConnection()) {
 
-			final String sqlQuery = " SELECT PUBLISHER_ID AS ID,  NAME AS NOME, URL " 
-							       + "FROM PUBLISHERS "
-								   + "WHERE NAME ILIKE (?)"
-								   + "ORDER BY PUBLISHER_ID";
+			final String sqlQuery = " SELECT PUBLISHER_ID AS ID,  NAME AS NOME, URL " + "FROM PUBLISHERS "
+					+ "WHERE NAME ILIKE (?)" + "ORDER BY PUBLISHER_ID";
 
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setString(1, "%" + nome + "%");
@@ -98,5 +94,72 @@ public class livrariaDAO {
 
 		return lstPublisher;
 
+	}
+
+	public boolean InsertPublisher(Editora publisher) {
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "INSERT INTO PUBLISHERS (NAME, URL) VALUES((?),(?))";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, publisher.getName());
+			pstm.setString(2, publisher.getUrl());
+
+			pstm.execute();
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean DeleteBookByISBN(String isbn) {
+		try (Connection connection = SqlConnection.GetConnection()) {
+
+			final String sqlQuery = "DELETE FROM BOOKS WHERE ISBN = (?)";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, isbn);
+			pstm.execute();
+
+			return true;
+		}
+
+		catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public ArrayList<String> GetEditoraToCombobox() {
+		ArrayList<String> Editoras = new ArrayList<>();
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "SELECT NAME FROM PUBLISHERS";
+			PreparedStatement pstm =  connection.prepareStatement(sqlQuery);
+			ResultSet rs = pstm.executeQuery();
+			
+			while(rs.next()) {
+				Editoras.add(rs.getString("NAME"));
+			}			
+		}
+		catch (SQLException e) {		
+			e.printStackTrace();
+		}
+		return Editoras;
+	}
+	public ArrayList<String> GetAutoresToCombobox() {
+		ArrayList<String> Autores = new ArrayList<>();
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "SELECT NAME FROM AUTHORS";
+			PreparedStatement pstm =  connection.prepareStatement(sqlQuery);
+			ResultSet rs = pstm.executeQuery();
+			
+			while(rs.next()) {
+				Autores.add(rs.getString("NAME"));
+			}			
+		}
+		catch (SQLException e) {		
+			e.printStackTrace();
+		}
+		return Autores;
 	}
 }

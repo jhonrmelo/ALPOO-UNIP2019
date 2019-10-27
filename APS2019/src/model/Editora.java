@@ -11,6 +11,11 @@ public class Editora {
 		name = pName;
 		url = pUrl;
 	}
+	public Editora(String pName, String pUrl) {
+		name = pName;
+		url = pUrl;
+		
+	}
 	public int getPublisher_id() {
 		return publisher_id;
 	}

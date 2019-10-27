@@ -1,32 +1,47 @@
 package controller;
 
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
+
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import org.w3c.dom.events.MouseEvent;
 
+import com.sun.net.httpserver.Authenticator.Success;
 import dao.livrariaDAO;
 import model.Autor;
 import model.Editora;
 import model.Livro;
 import view.ViewInitialPage;
 import view.viewBookDetail;
+import view.viewInsertPublisher;
 
 public class LivrariaController {
 
 	private ViewInitialPage _ViewInitialPage;
 	private livrariaDAO _LivrariaDAO;
 	private viewBookDetail _viewBookDetail;
+	private viewInsertPublisher _viewInsertPublisher;
+	String[] options;
 
 	public LivrariaController() {
+		options = new String[2];
+		options[0] = new String("Sim");
+		options[1] = new String("Não");
+		
 		_ViewInitialPage = new ViewInitialPage();
 		_LivrariaDAO = new livrariaDAO();
 		_ViewInitialPage.SetChangeCardAction(new SetCardVisible());
@@ -34,6 +49,10 @@ public class LivrariaController {
 		_ViewInitialPage.SetActionTable(new SetActionTblLivros());
 		_ViewInitialPage.SetActionlistenerSearchButtonAuthors(new SearchAutors());
 		_ViewInitialPage.SetActionlistenerSearchButtonPublisher(new SearchPublishers());
+		_ViewInitialPage.AddActionListenerBtnInsertEditora(new OpenViewInsertPublisher());
+		ArrayList<String> Editoras = _LivrariaDAO.GetEditoraToCombobox();
+		ArrayList<String> Autores = _LivrariaDAO.GetAutoresToCombobox();		
+		_ViewInitialPage.LoadComboboxSearch(Editoras, Autores);
 
 	}
 
@@ -97,12 +116,22 @@ public class LivrariaController {
 				if (value instanceof JButton) {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
-					if(button.getName() == "btnDetalhes" && e.getClickCount() == 1) {
-						Livro llivro =  _ViewInitialPage.getLivroBySelectedRow();
+					if (button.getName() == "btnDetalhes" && e.getClickCount() == 1) {
+						Livro llivro = _ViewInitialPage.getLivroBySelectedRow();
 						_viewBookDetail = new viewBookDetail();
 						_viewBookDetail.SetDetails(llivro);
 						_viewBookDetail.SetTableAuthor(llivro.getAutor().split(";"));
-										
+
+					} else if (button.getName() == "btnExcluir") {
+
+						int resposta = JOptionPane.showOptionDialog(_ViewInitialPage, "Deseja excluir este livro?",
+								"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+								options, null);
+						if (resposta == JOptionPane.YES_OPTION) {
+							Livro llivro = _ViewInitialPage.getLivroBySelectedRow();
+							_LivrariaDAO.DeleteBookByISBN(llivro.getIsbn());
+							_ViewInitialPage.SearchAfterActionBooks();
+						}
 					}
 				}
 			}
@@ -129,4 +158,38 @@ public class LivrariaController {
 		}
 
 	}
+
+	class OpenViewInsertPublisher implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			_viewInsertPublisher = new viewInsertPublisher();
+			_viewInsertPublisher.AddActionListenerBtnCadastrar(new InsertPublisher());
+
+		}
+	}
+
+	class InsertPublisher implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Editora publisher = _viewInsertPublisher.GetPublisherToInsert();
+
+			if (StringUtils.isEmpty(publisher.getName()) || StringUtils.isEmpty(publisher.getUrl())) {
+				JOptionPane.showMessageDialog(_viewInsertPublisher,
+						"Preencha todos os campos para seguir com o Cadastro", "Cadastro de Editora",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				if (_LivrariaDAO.InsertPublisher(publisher)) {
+					JOptionPane.showMessageDialog(_viewInsertPublisher, "Editora Cadastrada com sucesso",
+							"Cadastro de Editora", JOptionPane.INFORMATION_MESSAGE);
+					_viewInsertPublisher.dispose();
+					_ViewInitialPage.SearchAfterActionPublisher();
+				} else {
+					JOptionPane.showMessageDialog(_viewInsertPublisher, "Ocorreu um erro ao Cadastrar, tente novamente",
+							"Cadastro de Editora", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+
 }

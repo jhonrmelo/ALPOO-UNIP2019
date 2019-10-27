@@ -1,25 +1,20 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import model.Livro;
-
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.SystemColor;
-import java.awt.Toolkit;
 
 public class viewBookDetail extends JFrame {
 
@@ -38,7 +33,7 @@ public class viewBookDetail extends JFrame {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width / 2 - getSize().width, dim.height / 2 - getSize().height / 2);
 
-		setIconImage(Toolkit.getDefaultToolkit().getImage("D:\\NP12019\\APS2019\\imgs\\Details.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(viewBookDetail.class.getResource("/imgs/Book-Blank-Book-icon.png")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 436, 284);
 		contentPane = new JPanel();
@@ -108,6 +103,13 @@ public class viewBookDetail extends JFrame {
 		scrollPane = new JScrollPane(tblAutores);
 		scrollPane.setBounds(59, 148, 297, 72);
 		contentPane.add(scrollPane);
+		
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		int x = (screenSize.width - getWidth()) / 2;
+		int y = (screenSize.height - getHeight()) / 2;
+		setLocation(x, y);
+		setLocationRelativeTo(null);
 
 		setVisible(true);
 
@@ -130,4 +132,6 @@ public class viewBookDetail extends JFrame {
 		}
 		scrollPane.setVisible(true);
 	}
+	
+
 }
