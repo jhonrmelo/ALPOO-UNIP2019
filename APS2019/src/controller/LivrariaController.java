@@ -21,6 +21,9 @@ import javax.swing.JTable;
 import org.w3c.dom.events.MouseEvent;
 
 import com.sun.net.httpserver.Authenticator.Success;
+
+import controller.LivrariaController.EditPublishers;
+import controller.LivrariaController.SetActionTblPublisher;
 import dao.livrariaDAO;
 import model.Autor;
 import model.Editora;
@@ -28,6 +31,7 @@ import model.Livro;
 import view.ViewInitialPage;
 import view.viewBookDetail;
 import view.viewInsertPublisher;
+import view.viewUpdateDetail;
 
 public class LivrariaController {
 
@@ -40,7 +44,7 @@ public class LivrariaController {
 	public LivrariaController() {
 		options = new String[2];
 		options[0] = new String("Sim");
-		options[1] = new String("Não");
+		options[1] = new String("Nï¿½o");
 		
 		_ViewInitialPage = new ViewInitialPage();
 		_LivrariaDAO = new livrariaDAO();
@@ -53,6 +57,7 @@ public class LivrariaController {
 		ArrayList<String> Editoras = _LivrariaDAO.GetEditoraToCombobox();
 		ArrayList<String> Autores = _LivrariaDAO.GetAutoresToCombobox();		
 		_ViewInitialPage.LoadComboboxSearch(Editoras, Autores);
+		_ViewInitialPage.SetActionTableButtonPublisher(new SetActionTblPublisher());
 
 	}
 
@@ -125,7 +130,7 @@ public class LivrariaController {
 					} else if (button.getName() == "btnExcluir") {
 
 						int resposta = JOptionPane.showOptionDialog(_ViewInitialPage, "Deseja excluir este livro?",
-								"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+								"Exclusï¿½o", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 								options, null);
 						if (resposta == JOptionPane.YES_OPTION) {
 							Livro llivro = _ViewInitialPage.getLivroBySelectedRow();
@@ -189,6 +194,61 @@ public class LivrariaController {
 							"Cadastro de Editora", JOptionPane.ERROR_MESSAGE);
 				}
 			}
+		}
+	}
+	
+	//ALTERACAO DO GABRIEL 
+	// - Buscando os dados da editora
+	class SetActionTblPublisher implements MouseListener { 
+		
+		@Override
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			JTable tblAux = _ViewInitialPage.getTblPublisher();
+			int column = tblAux.getColumnModel().getColumnIndexAtX(e.getX());
+			int row = e.getY() / tblAux.getRowHeight();
+
+			if (row < tblAux.getRowCount() && row >= 0 && column < tblAux.getColumnCount() && column >= 0) {
+				Object value = tblAux.getValueAt(row, column);
+				if (value instanceof JButton) {
+					((JButton) value).doClick();
+					JButton button = (JButton) value;
+					if(button.getName() == "btnDetalhes" && e.getClickCount() == 1) {
+						Editora editora =  _ViewInitialPage.getEditoraBySelectedRow();
+						_viewUpdateDetail = new viewUpdateDetail();
+						_viewUpdateDetail.SetDetails(editora);
+					   _viewUpdateDetail.SetActionBtnEdit(new EditPublishers());
+					}
+				}
+			}
+		}
+		@Override
+		public void mouseExited(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mousePressed(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseEntered(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(java.awt.event.MouseEvent e) {
+
+		}
+
+	}
+
+	// - Busca os dados da view e envia para o DAO
+	class EditPublishers implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Editora editora = _viewUpdateDetail.getDetails();
+			_LivrariaDAO.EditPublisher(editora);
 		}
 	}
 
