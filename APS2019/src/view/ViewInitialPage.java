@@ -385,6 +385,10 @@ public class ViewInitialPage extends JFrame {
 	public void SetActionTable(MouseListener msa) {
 		tblLivros.addMouseListener(msa);
 	}
+	
+	public void SetActionTableButtonPublisher(MouseListener msa) {
+		tblEditora.addMouseListener(msa);
+	}
 
 	public void AddActionListenerBtnInsertEditora(ActionListener act) {
 		btnCadastrarEditora.addActionListener(act);
@@ -392,7 +396,7 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
-		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
+		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preï¿½o", "", "", "" };
 		Object[][] data = new Object[0][8];
 		dtmBooks = new DefaultTableModel(data, colNames);
 
