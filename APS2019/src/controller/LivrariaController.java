@@ -203,9 +203,29 @@ public class LivrariaController {
 			}
 		}
 	}
+
+	class EditPublishers implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Editora publisher = _viewUpdatePublisher.getDetails();
+			
+			if (StringUtils.isEmpty(publisher.getName()) || StringUtils.isEmpty(publisher.getUrl())) {
+				JOptionPane.showMessageDialog(_viewUpdatePublisher,
+						"Preencha todos os campos para seguir com a edição", "Edição de Editora",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(_viewUpdatePublisher, "Editora editada com sucesso",
+						"Edição de Editora", JOptionPane.INFORMATION_MESSAGE);
+				_viewUpdatePublisher.dispose();
+				_LivrariaDAO.EditPublisher(publisher);
+				_ViewInitialPage.SearchAfterActionPublisher();
+			}
+
+		}
+	}
 	
-	//ALTERACAO DO GABRIEL 
-	// - Buscando os dados da editora
+
 	class SetActionTblPublisher implements MouseListener { 
 		
 		@Override
@@ -223,6 +243,7 @@ public class LivrariaController {
 						Editora editora =  _ViewInitialPage.getEditoraBySelectedRow();
 						_viewUpdatePublisher = new viewUpdatePublisher();
 						_viewUpdatePublisher.SetDetails(editora);
+						_viewUpdatePublisher.SetActionBtnEdit(new EditPublishers());
 					}
 				}
 			}
@@ -249,13 +270,5 @@ public class LivrariaController {
 
 	}
 
-	// - Busca os dados da view e envia para o DAO
-	class EditPublishers implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Editora editora = _viewUpdatePublisher.getDetails();
-			_LivrariaDAO.EditPublisher(editora);
-		}
-	}
 
 }

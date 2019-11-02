@@ -414,7 +414,7 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
-		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "PreÃ§o", "", "", "" };
+		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
     
 		Object[][] data = new Object[0][8];
 		dtmBooks = new DefaultTableModel(data, colNames);
@@ -548,13 +548,13 @@ public class ViewInitialPage extends JFrame {
 
 	public void SearchAfterActionPublisher() {
 		txtBuscaEditora.setText("");
-		cbbAutor.setSelectedIndex(0);
-		cbbEditora.setSelectedIndex(0);
 		btnPesquisaEditora.doClick();
 	}
 
 	public void SearchAfterActionBooks() {
 		txtBuscaLivros.setText("");
+		cbbAutor.setSelectedIndex(0);
+		cbbEditora.setSelectedIndex(0);
 		btnPesquisarLivro.doClick();
 	}
 
@@ -577,12 +577,12 @@ public class ViewInitialPage extends JFrame {
 		for (Editora _editora : Editoras) {
 			modelcbbEditora.add(new Item(_editora.getPublisher_id(), _editora.getName()));
 		}
-		cbbAutor = new JComboBox<>(modelCbbAutor);
+		cbbAutor = new JComboBox<Item>(modelCbbAutor);
 		cbbAutor.setBounds(313, 61, 137, 22);
 		pnlBuscaLivros.add(cbbAutor);	
 		cbbAutor.setSelectedIndex(0);
 			
-		cbbEditora = new JComboBox(modelcbbEditora);
+		cbbEditora = new JComboBox<Item>(modelcbbEditora);
 		cbbEditora.setBounds(166, 61, 137, 22);
 		pnlBuscaLivros.add(cbbEditora);
 		cbbEditora.setSelectedIndex(0);

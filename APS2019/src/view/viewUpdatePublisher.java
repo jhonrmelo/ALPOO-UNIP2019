@@ -57,7 +57,7 @@ public class viewUpdatePublisher extends JFrame {
 		contentPane.add(txtnome);
 		txtnome.setColumns(10);
 
-		JButton btnEdit = new JButton("Editar");
+	    btnEdit = new JButton("Editar");
 		btnEdit.setIcon(new ImageIcon(viewUpdatePublisher.class.getResource("/imgs/edit.png")));
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnEdit.setBounds(263, 113, 123, 33);
@@ -93,8 +93,8 @@ public class viewUpdatePublisher extends JFrame {
 
 	public void SetDetails(Editora pEditora) {
 		txtId.setText(Integer.toString(pEditora.getPublisher_id()));
-		txtnome.setText(pEditora.getName());
-		txtURL.setText(pEditora.getUrl());
+		txtnome.setText(pEditora.getName().trim());
+		txtURL.setText(pEditora.getUrl().trim());
 	}
 
 	public Editora getDetails() {
@@ -106,7 +106,6 @@ public class viewUpdatePublisher extends JFrame {
 	}
 
 	public void SetActionBtnEdit(ActionListener act) {
-		// botao recebe o action listener
 		btnEdit.addActionListener(act);
 	}
 }
