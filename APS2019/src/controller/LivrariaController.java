@@ -22,16 +22,18 @@ import org.w3c.dom.events.MouseEvent;
 
 import com.sun.net.httpserver.Authenticator.Success;
 
-import controller.LivrariaController.EditPublishers;
 import controller.LivrariaController.SetActionTblPublisher;
 import dao.livrariaDAO;
 import model.Autor;
 import model.Editora;
+import model.FiltroBuscaLivro;
+import model.Item;
 import model.Livro;
 import view.ViewInitialPage;
 import view.viewBookDetail;
 import view.viewInsertPublisher;
-import view.viewUpdateDetail;
+import view.viewUpdatePublisher;
+
 
 public class LivrariaController {
 
@@ -39,12 +41,13 @@ public class LivrariaController {
 	private livrariaDAO _LivrariaDAO;
 	private viewBookDetail _viewBookDetail;
 	private viewInsertPublisher _viewInsertPublisher;
+	private viewUpdatePublisher _viewUpdatePublisher;
 	String[] options;
 
 	public LivrariaController() {
 		options = new String[2];
 		options[0] = new String("Sim");
-		options[1] = new String("Nï¿½o");
+		options[1] = new String("Não");
 		
 		_ViewInitialPage = new ViewInitialPage();
 		_LivrariaDAO = new livrariaDAO();
@@ -54,8 +57,8 @@ public class LivrariaController {
 		_ViewInitialPage.SetActionlistenerSearchButtonAuthors(new SearchAutors());
 		_ViewInitialPage.SetActionlistenerSearchButtonPublisher(new SearchPublishers());
 		_ViewInitialPage.AddActionListenerBtnInsertEditora(new OpenViewInsertPublisher());
-		ArrayList<String> Editoras = _LivrariaDAO.GetEditoraToCombobox();
-		ArrayList<String> Autores = _LivrariaDAO.GetAutoresToCombobox();		
+		ArrayList<Editora> Editoras = _LivrariaDAO.GetEditoraToCombobox();
+		ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();		
 		_ViewInitialPage.LoadComboboxSearch(Editoras, Autores);
 		_ViewInitialPage.SetActionTableButtonPublisher(new SetActionTblPublisher());
 
@@ -64,7 +67,11 @@ public class LivrariaController {
 	class SearchBooks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ArrayList<Livro> lstLivros = _LivrariaDAO.GetLivrosByNome(_ViewInitialPage.GetBooksTextSearch());
+			String NameBook = _ViewInitialPage.GetBooksTextSearch();
+			Item AuthorItem = _ViewInitialPage.GetsearchCbbAuthor();
+			Item PublisherItem = _ViewInitialPage.GetSearchCbbEditora();
+			FiltroBuscaLivro filtro = new FiltroBuscaLivro(NameBook, PublisherItem.getId(), AuthorItem.getId());
+			ArrayList<Livro> lstLivros = _LivrariaDAO.GetLivrosByFiltro(filtro);
 			_ViewInitialPage.MontaTableLivros(lstLivros);
 		}
 	}
@@ -130,7 +137,7 @@ public class LivrariaController {
 					} else if (button.getName() == "btnExcluir") {
 
 						int resposta = JOptionPane.showOptionDialog(_ViewInitialPage, "Deseja excluir este livro?",
-								"Exclusï¿½o", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+								"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 								options, null);
 						if (resposta == JOptionPane.YES_OPTION) {
 							Livro llivro = _ViewInitialPage.getLivroBySelectedRow();
@@ -196,9 +203,29 @@ public class LivrariaController {
 			}
 		}
 	}
+
+	class EditPublishers implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Editora publisher = _viewUpdatePublisher.getDetails();
+			
+			if (StringUtils.isEmpty(publisher.getName()) || StringUtils.isEmpty(publisher.getUrl())) {
+				JOptionPane.showMessageDialog(_viewUpdatePublisher,
+						"Preencha todos os campos para seguir com a edição", "Edição de Editora",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(_viewUpdatePublisher, "Editora editada com sucesso",
+						"Edição de Editora", JOptionPane.INFORMATION_MESSAGE);
+				_viewUpdatePublisher.dispose();
+				_LivrariaDAO.EditPublisher(publisher);
+				_ViewInitialPage.SearchAfterActionPublisher();
+			}
+
+		}
+	}
 	
-	//ALTERACAO DO GABRIEL 
-	// - Buscando os dados da editora
+
 	class SetActionTblPublisher implements MouseListener { 
 		
 		@Override
@@ -212,11 +239,11 @@ public class LivrariaController {
 				if (value instanceof JButton) {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
-					if(button.getName() == "btnDetalhes" && e.getClickCount() == 1) {
+					if(button.getName() == "btnEditar" && e.getClickCount() == 1) {
 						Editora editora =  _ViewInitialPage.getEditoraBySelectedRow();
-						_viewUpdateDetail = new viewUpdateDetail();
-						_viewUpdateDetail.SetDetails(editora);
-					   _viewUpdateDetail.SetActionBtnEdit(new EditPublishers());
+						_viewUpdatePublisher = new viewUpdatePublisher();
+						_viewUpdatePublisher.SetDetails(editora);
+						_viewUpdatePublisher.SetActionBtnEdit(new EditPublishers());
 					}
 				}
 			}
@@ -243,13 +270,5 @@ public class LivrariaController {
 
 	}
 
-	// - Busca os dados da view e envia para o DAO
-	class EditPublishers implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Editora editora = _viewUpdateDetail.getDetails();
-			_LivrariaDAO.EditPublisher(editora);
-		}
-	}
 
 }

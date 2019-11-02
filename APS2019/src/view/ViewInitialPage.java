@@ -13,6 +13,7 @@ import javax.swing.table.TableColumnModel;
 import model.Livro;
 import model.Autor;
 import model.Editora;
+import model.Item;
 import model.JtableButton;
 import model.RenderTable;
 import java.awt.Color;
@@ -34,6 +35,7 @@ import javax.swing.JSplitPane;
 import java.awt.CardLayout;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.JTextField;
@@ -71,6 +73,8 @@ public class ViewInitialPage extends JFrame {
 	JButton btnCadastrarEditora;
 	JComboBox cbbAutor;
 	JComboBox cbbEditora;
+	JPanel pnlBuscaLivros;
+	private final JButton btnCadastrar = new JButton("Cadastrar");
 
 	public ViewInitialPage() {
 
@@ -167,7 +171,7 @@ public class ViewInitialPage extends JFrame {
 		pnlCards.add(pnlCardLivros, "pnlCardLivros");
 		pnlCardLivros.setLayout(null);
 
-		JPanel pnlBuscaLivros = new JPanel();
+		pnlBuscaLivros = new JPanel();
 		pnlBuscaLivros.setBorder(new BevelBorder(BevelBorder.LOWERED, SystemColor.textHighlight,
 				SystemColor.textHighlight, SystemColor.textHighlight, SystemColor.textHighlight));
 		pnlBuscaLivros.setBackground(SystemColor.controlHighlight);
@@ -176,7 +180,7 @@ public class ViewInitialPage extends JFrame {
 		pnlBuscaLivros.setLayout(null);
 
 		txtBuscaLivros = new JTextField();
-		txtBuscaLivros.setBounds(10, 62, 296, 20);
+		txtBuscaLivros.setBounds(10, 62, 146, 20);
 		pnlBuscaLivros.add(txtBuscaLivros);
 		txtBuscaLivros.setColumns(10);
 
@@ -186,9 +190,10 @@ public class ViewInitialPage extends JFrame {
 		lblTituloLivro.setFont(new Font("Tahoma", Font.BOLD, 16));
 
 		btnPesquisarLivro = new JButton("Pesquisar");
+		btnPesquisarLivro.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnPesquisarLivro.setForeground(Color.BLACK);
 		btnPesquisarLivro.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/Search.png")));
-		btnPesquisarLivro.setBounds(610, 61, 132, 23);
+		btnPesquisarLivro.setBounds(460, 61, 132, 23);
 
 		tblLivros = new JTable() {
 			@Override
@@ -203,9 +208,6 @@ public class ViewInitialPage extends JFrame {
 
 		pnlBuscaLivros.add(btnPesquisarLivro);
 
-		cbbEditora = new JComboBox();
-		cbbEditora.setBounds(316, 61, 137, 22);
-		pnlBuscaLivros.add(cbbEditora);
 
 		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -214,17 +216,21 @@ public class ViewInitialPage extends JFrame {
 
 		JLabel lblEditora = new JLabel("Editora:");
 		lblEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblEditora.setBounds(317, 46, 52, 14);
+		lblEditora.setBounds(166, 45, 52, 14);
 		pnlBuscaLivros.add(lblEditora);
 
-		cbbAutor = new JComboBox();
-		cbbAutor.setBounds(463, 61, 137, 22);
-		pnlBuscaLivros.add(cbbAutor);
+
+
 
 		JLabel lblAutor = new JLabel("Autor:");
 		lblAutor.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblAutor.setBounds(463, 46, 48, 14);
+		lblAutor.setBounds(313, 45, 48, 14);
 		pnlBuscaLivros.add(lblAutor);
+		btnCadastrar.setForeground(Color.BLACK);
+		btnCadastrar.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnCadastrar.setBounds(603, 62, 132, 23);
+		pnlBuscaLivros.add(btnCadastrar);
+		btnCadastrar.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/add.png")));
 
 		BookscrollPane = new JScrollPane(tblLivros);
 		BookscrollPane.setBounds(0, 106, 752, 536);
@@ -297,6 +303,8 @@ public class ViewInitialPage extends JFrame {
 		lblTituloEditora.setFont(new Font("Tahoma", Font.BOLD, 17));
 		pnlCardEditoras.add(lblTituloEditora);
 
+		
+		
 		JPanel pnlBuscaEditora = new JPanel();
 		pnlCardEditoras.add(pnlBuscaEditora);
 
@@ -361,6 +369,13 @@ public class ViewInitialPage extends JFrame {
 	public String GetBooksTextSearch() {
 		return txtBuscaLivros.getText();
 	}
+	public Item GetsearchCbbAuthor() {
+		return  (Item) cbbAutor.getSelectedItem();
+	}
+	public Item GetSearchCbbEditora() {
+		return  (Item) cbbEditora.getSelectedItem();
+	}
+
 
 	public String GetAuthorsTextSearch() {
 		return txtBuscaAutores.getText();
@@ -368,6 +383,9 @@ public class ViewInitialPage extends JFrame {
 
 	public String GetPublishersTextSearch() {
 		return txtBuscaEditora.getText();
+	}
+	public Item GetItemPublisher () {
+		return  (Item) cbbAutor.getSelectedItem();
 	}
 
 	public void SetActionListenerSearchButton(ActionListener act) {
@@ -396,7 +414,7 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
-		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "PreÃ§o", "", "", "" };
+		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
     
 		Object[][] data = new Object[0][8];
 		dtmBooks = new DefaultTableModel(data, colNames);
@@ -501,13 +519,17 @@ public class ViewInitialPage extends JFrame {
 	public JTable getTblLivro() {
 		return tblLivros;
 	}
+	public JTable getTblPublisher() {
+		return tblEditora;
+	}
+
 
 	public Editora getEditoraBySelectedRow() {
 	int linhaSelectionada = tblEditora.getSelectedRow();
 
-	int ID = (int) dtm.getValueAt(linhaSelectionada, 0);
-	String Nome = dtm.getValueAt(linhaSelectionada, 1).toString();
-	String URL = dtm.getValueAt(linhaSelectionada, 2).toString();
+	int ID = (int) dtmPublisher.getValueAt(linhaSelectionada, 0);
+	String Nome = dtmPublisher.getValueAt(linhaSelectionada, 1).toString();
+	String URL = dtmPublisher.getValueAt(linhaSelectionada, 2).toString();
 
 	return new Editora(ID, Nome, URL);
 	}
@@ -531,20 +553,39 @@ public class ViewInitialPage extends JFrame {
 
 	public void SearchAfterActionBooks() {
 		txtBuscaLivros.setText("");
+		cbbAutor.setSelectedIndex(0);
+		cbbEditora.setSelectedIndex(0);
 		btnPesquisarLivro.doClick();
 	}
 
-	public void LoadComboboxSearch(ArrayList<String> Editoras, ArrayList<String> Autores) {
+	public void LoadComboboxSearch(ArrayList<Editora> Editoras, ArrayList<Autor> Autores) {
 
-		Editoras.add("Todos");
-		Autores.add("Todos");
-		Object[] ArrayEditoras = Editoras.toArray();
-		Object[] ArrayAutores = Autores.toArray();
+		Vector<Item> modelCbbAutor =  new Vector<Item>();
+		Vector<Item> modelcbbEditora = new Vector<Item>();
+		
+		Item customItem = new Item(0, "Todos");
+		
+		modelCbbAutor.add(customItem);
+		modelcbbEditora.add(customItem);
+		
 
-		cbbEditora.setModel(new DefaultComboBoxModel(ArrayEditoras));
-		cbbAutor.setModel(new DefaultComboBoxModel(ArrayAutores));
-		cbbAutor.setSelectedItem("Todos");
-		cbbEditora.setSelectedItem("Todos");
+		
+		for(Autor _autor : Autores) {
+			modelCbbAutor.add(new Item(_autor.getAuthorID(), _autor.getFname()));
+		}
+		
+		for (Editora _editora : Editoras) {
+			modelcbbEditora.add(new Item(_editora.getPublisher_id(), _editora.getName()));
+		}
+		cbbAutor = new JComboBox<Item>(modelCbbAutor);
+		cbbAutor.setBounds(313, 61, 137, 22);
+		pnlBuscaLivros.add(cbbAutor);	
+		cbbAutor.setSelectedIndex(0);
+			
+		cbbEditora = new JComboBox<Item>(modelcbbEditora);
+		cbbEditora.setBounds(166, 61, 137, 22);
+		pnlBuscaLivros.add(cbbEditora);
+		cbbEditora.setSelectedIndex(0);
+
 	}
-
 }
