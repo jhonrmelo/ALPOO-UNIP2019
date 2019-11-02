@@ -112,6 +112,26 @@ public class livrariaDAO {
 			return false;
 		}
 	}
+	
+	//Alteracao Gabriel 
+	//Metodo para realizar a alteracao de editoras
+	public boolean EditPublisher(Editora pEditora) {		
+		
+		try (Connection connection = SqlConnection.GetConnection()) {
+
+			final String sqlQuery = "UPDATE PUBLISHERS SET NAME = (?), URL = (?) WHERE PUBLISHERS_ID = (?);";
+			
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, pEditora.getName());
+			pstm.setString(2, pEditora.getUrl());
+			pstm.execute();
+				
+		} catch (SQLException  e) {
+			e.printStackTrace();
+		}		
+		return false;
+	}
+
 
 	public boolean DeleteBookByISBN(String isbn) {
 		try (Connection connection = SqlConnection.GetConnection()) {
