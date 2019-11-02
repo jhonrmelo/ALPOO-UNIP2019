@@ -396,7 +396,8 @@ public class ViewInitialPage extends JFrame {
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
 
-		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Pre�o", "", "", "" };
+		Object[] colNames = { "ISBN", "Nome", "Autores", "Editora", "Preço", "", "", "" };
+    
 		Object[][] data = new Object[0][8];
 		dtmBooks = new DefaultTableModel(data, colNames);
 
@@ -501,6 +502,16 @@ public class ViewInitialPage extends JFrame {
 		return tblLivros;
 	}
 
+	public Editora getEditoraBySelectedRow() {
+	int linhaSelectionada = tblEditora.getSelectedRow();
+
+	int ID = (int) dtm.getValueAt(linhaSelectionada, 0);
+	String Nome = dtm.getValueAt(linhaSelectionada, 1).toString();
+	String URL = dtm.getValueAt(linhaSelectionada, 2).toString();
+
+	return new Editora(ID, Nome, URL);
+	}
+	
 	public Livro getLivroBySelectedRow() {
 		int linhaSelectionada = tblLivros.getSelectedRow();
 
