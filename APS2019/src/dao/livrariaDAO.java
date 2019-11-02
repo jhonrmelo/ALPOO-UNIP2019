@@ -7,13 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
+
 import model.Autor;
 import model.Editora;
+import model.FiltroBuscaLivro;
 import model.Livro;
 import util.SqlConnection;
 
 public class livrariaDAO {
-	public ArrayList<Livro> GetLivrosByNome(String nome) {
+	public ArrayList<Livro> GetLivrosByFiltro(FiltroBuscaLivro filtro) {
 
 		ArrayList<Livro> lstLivro = new ArrayList<Livro>();
 
@@ -22,11 +25,25 @@ public class livrariaDAO {
 			final String SqlQuery = "SELECT BKS.ISBN ,BKS.TITLE,BKS.PRICE, STRING_AGG(AUTH.FNAME || ' ' || AUTH.NAME,'; ') AS AUTHORNAME, PS.NAME AS PUBLISHERNAME "
 					+ "FROM BOOKS BKS " + "JOIN BOOKSAUTHORS BA ON BA.ISBN =  BKS.ISBN "
 					+ "JOIN AUTHORS AUTH ON AUTH.AUTHOR_ID = BA.AUTHOR_ID "
-					+ "JOIN PUBLISHERS PS ON PS.PUBLISHER_ID = BKS.PUBLISHER_ID " + "WHERE TITLE ILIKE LOWER(?)"
-					+ "GROUP BY  BKS.ISBN ,BKS.TITLE, BKS.PRICE, PS.NAME ";
+					+ "JOIN PUBLISHERS PS ON PS.PUBLISHER_ID = BKS.PUBLISHER_ID " + 
+					 filtro.GetWhere() +  
+					"GROUP BY  BKS.ISBN ,BKS.TITLE, BKS.PRICE, PS.NAME ";
 
 			PreparedStatement pstm = connection.prepareStatement(SqlQuery);
-			pstm.setString(1, "%" + nome + "%");
+			int parameterIndex = 1;
+			if(!StringUtils.isEmpty(filtro.getNameLivro())){		
+				pstm.setString(parameterIndex, "%" + filtro.getNameLivro() + "%");
+				parameterIndex++;
+			}
+			if(filtro.getPublisherID() != 0) {
+				pstm.setInt(parameterIndex, filtro.getPublisherID());
+				parameterIndex++;
+			}
+			
+			if(filtro.getAuthorID() != 0) {
+				pstm.setInt(parameterIndex, filtro.getAuthorID());
+			}
+			
 			ResultSet rs = pstm.executeQuery();
 
 			while (rs.next()) {
@@ -130,15 +147,15 @@ public class livrariaDAO {
 		}
 	}
 	
-	public ArrayList<String> GetEditoraToCombobox() {
-		ArrayList<String> Editoras = new ArrayList<>();
+	public ArrayList<Editora> GetEditoraToCombobox() {
+		ArrayList<Editora> Editoras = new ArrayList<Editora>();
 		try (Connection connection = SqlConnection.GetConnection()) {
-			final String sqlQuery = "SELECT NAME FROM PUBLISHERS";
+			final String sqlQuery = "SELECT * FROM PUBLISHERS";
 			PreparedStatement pstm =  connection.prepareStatement(sqlQuery);
 			ResultSet rs = pstm.executeQuery();
 			
 			while(rs.next()) {
-				Editoras.add(rs.getString("NAME"));
+				Editoras.add(new Editora(rs.getInt(1),rs.getString(2),rs.getString(3)));
 			}			
 		}
 		catch (SQLException e) {		
@@ -146,15 +163,15 @@ public class livrariaDAO {
 		}
 		return Editoras;
 	}
-	public ArrayList<String> GetAutoresToCombobox() {
-		ArrayList<String> Autores = new ArrayList<>();
+	public ArrayList<Autor> GetAutoresToCombobox() {
+		ArrayList<Autor> Autores = new ArrayList<Autor>();
 		try (Connection connection = SqlConnection.GetConnection()) {
-			final String sqlQuery = "SELECT NAME FROM AUTHORS";
+			final String sqlQuery = "SELECT * FROM AUTHORS";
 			PreparedStatement pstm =  connection.prepareStatement(sqlQuery);
 			ResultSet rs = pstm.executeQuery();
 			
 			while(rs.next()) {
-				Autores.add(rs.getString("NAME"));
+				Autores.add(new Autor(rs.getInt(1),rs.getString(2),rs.getString(3)));
 			}			
 		}
 		catch (SQLException e) {		

@@ -13,6 +13,8 @@ import model.Editora;
 import model.Livro;
 
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -22,6 +24,7 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 public class viewUpdatePublisher extends JFrame {
 
@@ -33,58 +36,57 @@ public class viewUpdatePublisher extends JFrame {
 	private JTextField txtId;
 
 	public viewUpdatePublisher() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("D:\\NP12019\\APS2019\\imgs\\Details.png"));
+		setTitle("Editar Editora");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(viewUpdatePublisher.class.getResource("/imgs/Editora.png")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 436, 150);
+		setBounds(100, 100, 430, 196);
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.controlHighlight);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		// dtm = new DefaultTableModel(data, colNames);
-
-		JLabel lblDetalhes = new JLabel("Editar");
-		lblDetalhes.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblDetalhes.setBounds(166, 11, 82, 14);
-		contentPane.add(lblDetalhes);
-
 		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblNome.setBounds(10, 41, 46, 14);
+		lblNome.setBounds(24, 62, 48, 14);
 		contentPane.add(lblNome);
 
 		txtnome = new JTextField();
 		txtnome.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		txtnome.setEditable(false);
-		txtnome.setBounds(76, 40, 304, 20);
+		txtnome.setBounds(24, 78, 162, 20);
 		contentPane.add(txtnome);
 		txtnome.setColumns(10);
 
 		JButton btnEdit = new JButton("Editar");
+		btnEdit.setIcon(new ImageIcon(viewUpdatePublisher.class.getResource("/imgs/edit.png")));
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnEdit.setBounds(258, 70, 123, 23);
+		btnEdit.setBounds(263, 113, 123, 33);
 		contentPane.add(btnEdit);
 
 		JLabel lbURL = new JLabel("URL:");
 		lbURL.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lbURL.setBounds(10, 74, 48, 14);
+		lbURL.setBounds(224, 62, 48, 14);
 		contentPane.add(lbURL);
 
 		txtURL = new JTextField();
-		txtURL.setEditable(false);
-		txtURL.setBounds(76, 71, 68, 20);
+		txtURL.setBounds(224, 78, 162, 20);
 		contentPane.add(txtURL);
 		txtURL.setColumns(10);
 
 		txtId = new JTextField();
-		txtId.setText("ID");
 		txtId.setEditable(false);
-		txtId.setEnabled(false);
+		txtId.setText("ID");
 		txtId.setColumns(10);
-		txtId.setBounds(166, 72, 46, 20);
+		txtId.setBounds(24, 31, 48, 20);
 		contentPane.add(txtId);
 
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		int x = (screenSize.width - getWidth()) / 2;
+		int y = (screenSize.height - getHeight()) / 2;
+		setLocation(x, y);
+		setLocationRelativeTo(null);
+		
 		setVisible(true);
 
 	}
