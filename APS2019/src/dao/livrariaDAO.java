@@ -67,7 +67,7 @@ public class livrariaDAO {
 		try (Connection connection = SqlConnection.GetConnection()) {
 
 			final String sqlQuery = "SELECT AUTHOR_ID AS  ID, FNAME AS  NOME, NAME AS SOBRENOME " + "FROM AUTHORS AUTH "
-					+ "WHERE NAME LIKE (?) OR FNAME LIKE (?) " + "ORDER BY AUTHOR_ID";
+					+ "WHERE NAME ILIKE (?) OR FNAME ILIKE (?) " + "ORDER BY AUTHOR_ID";
 
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setString(1, "%" + nome + "%");
@@ -130,8 +130,24 @@ public class livrariaDAO {
 		}
 	}
 	
-	//Alteracao Gabriel 
-	//Metodo para realizar a alteracao de editoras
+	public boolean InsertAuthor (Autor author) {
+		
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "INSERT INTO Authors (NAME, FNAME) VALUES((?),(?))";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, author.getName());
+			pstm.setString(2, author.getFname());
+			pstm.execute();
+
+			return true;
+		}
+			catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+	}
+	
+	
 	public boolean EditPublisher(Editora pEditora) {		
 		
 		try (Connection connection = SqlConnection.GetConnection()) {
@@ -149,6 +165,24 @@ public class livrariaDAO {
 		}		
 		return false;
 	}
+	public boolean EditAuthors(Autor author) {		
+		
+		try (Connection connection = SqlConnection.GetConnection()) {
+
+			final String sqlQuery = "UPDATE AUTHORS SET NAME = (?), FNAME = (?) WHERE AUTHOR_ID = (?)";
+			
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, author.getName());
+			pstm.setString(2, author.getFname());
+			pstm.setInt(3, author.getAuthorID());
+			pstm.execute();
+				
+		} catch (SQLException  e) {
+			e.printStackTrace();
+		}		
+		return false;
+	}
+
 
 
 	public boolean DeleteBookByISBN(String isbn) {

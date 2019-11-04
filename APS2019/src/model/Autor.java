@@ -13,6 +13,10 @@ public class Autor {
 		name = pName;
 		fname =  pFName;
 	}
+	public Autor (String pName, String pFName) {
+		name = pName;
+		fname =  pFName;
+	}
 	
 	public int getAuthorID() {
 		return AuthorID;

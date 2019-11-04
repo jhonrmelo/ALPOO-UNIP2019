@@ -71,6 +71,7 @@ public class ViewInitialPage extends JFrame {
 	JTable tblEditora;
 	JScrollPane EditoraScrollPane;
 	JButton btnCadastrarEditora;
+	JButton btnCadastrarAutor;
 	JComboBox cbbAutor;
 	JComboBox cbbEditora;
 	JPanel pnlBuscaLivros;
@@ -331,6 +332,12 @@ public class ViewInitialPage extends JFrame {
 		btnCadastrarEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnCadastrarEditora.setBounds(549, 61, 132, 23);
 		pnlBuscaEditora.add(btnCadastrarEditora);
+		
+		btnCadastrarAutor = new JButton("Cadastrar");
+		btnCadastrarAutor.setIcon(new ImageIcon(ViewInitialPage.class.getResource("/imgs/add.png")));
+		btnCadastrarAutor.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnCadastrarAutor.setBounds(549, 61, 132, 23);
+		pnlBuscaAutores.add(btnCadastrarAutor);
 
 		cardLayout = (CardLayout) (pnlCards.getLayout());
 
@@ -407,9 +414,17 @@ public class ViewInitialPage extends JFrame {
 	public void SetActionTableButtonPublisher(MouseListener msa) {
 		tblEditora.addMouseListener(msa);
 	}
+	public void SetActionTableButtonAuthor(MouseListener msa) {
+		tblAutores.addMouseListener(msa);
+	}
+	
+	
 
 	public void AddActionListenerBtnInsertEditora(ActionListener act) {
 		btnCadastrarEditora.addActionListener(act);
+	}
+	public void AddActionListenerBtnInsertAuthor (ActionListener act) {
+		btnCadastrarAutor.addActionListener(act);
 	}
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
@@ -522,6 +537,10 @@ public class ViewInitialPage extends JFrame {
 	public JTable getTblPublisher() {
 		return tblEditora;
 	}
+	public JTable getTblAuthor() {
+		return tblAutores;
+	}
+
 
 
 	public Editora getEditoraBySelectedRow() {
@@ -533,6 +552,17 @@ public class ViewInitialPage extends JFrame {
 
 	return new Editora(ID, Nome, URL);
 	}
+
+	public Autor getAuthorBySelectedRow() {
+	int linhaSelectionada = tblAutores.getSelectedRow();
+
+	int ID = (int) dtmAuthors.getValueAt(linhaSelectionada, 0);
+	String Nome = dtmAuthors.getValueAt(linhaSelectionada, 1).toString();
+	String Sobrenome = dtmAuthors.getValueAt(linhaSelectionada, 2).toString();
+
+	return new Autor(ID, Sobrenome, Nome);
+	}
+	
 	
 	public Livro getLivroBySelectedRow() {
 		int linhaSelectionada = tblLivros.getSelectedRow();
@@ -549,6 +579,10 @@ public class ViewInitialPage extends JFrame {
 	public void SearchAfterActionPublisher() {
 		txtBuscaEditora.setText("");
 		btnPesquisaEditora.doClick();
+	}
+	public void SearchAfterActionAuthor() {
+		txtBuscaAutores.setText("");
+		btnPesquisarAutor.doClick();
 	}
 
 	public void SearchAfterActionBooks() {
@@ -588,4 +622,5 @@ public class ViewInitialPage extends JFrame {
 		cbbEditora.setSelectedIndex(0);
 
 	}
+	
 }

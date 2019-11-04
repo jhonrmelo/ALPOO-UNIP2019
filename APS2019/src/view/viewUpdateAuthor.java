@@ -1,42 +1,35 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-
-import model.Editora;
-import model.Livro;
-
-import java.awt.Color;
 import java.awt.Dimension;
-
-import javax.swing.JLabel;
+import java.awt.EventQueue;
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
 
-public class viewUpdatePublisher extends JFrame {
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import model.Autor;
+
+public class viewUpdateAuthor extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtnome;
 	private JButton btnEdit;
 	DefaultTableModel dtm = new DefaultTableModel();
-	private JTextField txtURL;
+	private JTextField txtSobrenom;
 	private JTextField txtId;
 
-	public viewUpdatePublisher() {
-		setTitle("Editar Editora");
+	public viewUpdateAuthor() {
+		setTitle("Editar Autor");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(viewUpdatePublisher.class.getResource("/imgs/Editora.png")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 430, 196);
@@ -63,15 +56,15 @@ public class viewUpdatePublisher extends JFrame {
 		btnEdit.setBounds(263, 113, 123, 33);
 		contentPane.add(btnEdit);
 
-		JLabel lbURL = new JLabel("URL:");
-		lbURL.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lbURL.setBounds(224, 62, 48, 14);
-		contentPane.add(lbURL);
+		JLabel lblSobrenome = new JLabel("Sobrenome:");
+		lblSobrenome.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblSobrenome.setBounds(224, 62, 87, 14);
+		contentPane.add(lblSobrenome);
 
-		txtURL = new JTextField();
-		txtURL.setBounds(224, 78, 162, 20);
-		contentPane.add(txtURL);
-		txtURL.setColumns(10);
+		txtSobrenom = new JTextField();
+		txtSobrenom.setBounds(224, 78, 162, 20);
+		contentPane.add(txtSobrenom);
+		txtSobrenom.setColumns(10);
 
 		txtId = new JTextField();
 		txtId.setEditable(false);
@@ -88,21 +81,20 @@ public class viewUpdatePublisher extends JFrame {
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
-
 	}
-
-	public void SetDetails(Editora pEditora) {
-		txtId.setText(Integer.toString(pEditora.getPublisher_id()));
-		txtnome.setText(pEditora.getName().trim());
-		txtURL.setText(pEditora.getUrl().trim());
+	
+	public void SetDetails(Autor author) {
+		txtnome.setText(author.getFname().trim());
+		txtId.setText( Integer.toString(author.getAuthorID()));
+		txtSobrenom.setText(author.getName().trim());
 	}
-
-	public Editora getDetails() {
-		
-	 return new Editora(Integer.parseInt(txtId.getText()), txtnome.getText(), txtURL.getText());
+	
+	public Autor getDetails() {
+		return new Autor(Integer.parseInt(txtId.getText()),txtSobrenom.getText(), txtnome.getText());
 	}
-
+	
 	public void SetActionBtnEdit(ActionListener act) {
 		btnEdit.addActionListener(act);
 	}
+
 }

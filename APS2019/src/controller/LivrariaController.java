@@ -31,7 +31,9 @@ import model.Item;
 import model.Livro;
 import view.ViewInitialPage;
 import view.viewBookDetail;
+import view.viewInsertAuthor;
 import view.viewInsertPublisher;
+import view.viewUpdateAuthor;
 import view.viewUpdatePublisher;
 
 
@@ -42,6 +44,8 @@ public class LivrariaController {
 	private viewBookDetail _viewBookDetail;
 	private viewInsertPublisher _viewInsertPublisher;
 	private viewUpdatePublisher _viewUpdatePublisher;
+	private viewInsertAuthor _viewInsertAuthor;
+	private viewUpdateAuthor _viewUpdateAuthor;
 	String[] options;
 
 	public LivrariaController() {
@@ -61,6 +65,8 @@ public class LivrariaController {
 		ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();		
 		_ViewInitialPage.LoadComboboxSearch(Editoras, Autores);
 		_ViewInitialPage.SetActionTableButtonPublisher(new SetActionTblPublisher());
+		_ViewInitialPage.SetActionTableButtonAuthor(new SetActionTableAuthor());
+		_ViewInitialPage.AddActionListenerBtnInsertAuthor(new OpenViewInsertAuthor());
 
 	}
 
@@ -180,6 +186,16 @@ public class LivrariaController {
 
 		}
 	}
+	
+	class OpenViewInsertAuthor implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			_viewInsertAuthor = new viewInsertAuthor();
+			_viewInsertAuthor.SetActionListenerBtnCadastrar(new InsertAuthor());
+
+		}
+	}
 
 	class InsertPublisher implements ActionListener {
 		@Override
@@ -199,6 +215,28 @@ public class LivrariaController {
 				} else {
 					JOptionPane.showMessageDialog(_viewInsertPublisher, "Ocorreu um erro ao Cadastrar, tente novamente",
 							"Cadastro de Editora", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+	class InsertAuthor implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Autor author = _viewInsertAuthor.GetAuthor();
+
+			if (StringUtils.isEmpty(author.getName()) || StringUtils.isEmpty(author.getFname())) {
+				JOptionPane.showMessageDialog(_viewInsertAuthor,
+						"Preencha todos os campos para seguir com o Cadastro", "Cadastro de Autor",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				if (_LivrariaDAO.InsertAuthor(author)) {
+					JOptionPane.showMessageDialog(_viewInsertAuthor, "Autor Cadastrado com sucesso",
+							"Cadastro de Autor", JOptionPane.INFORMATION_MESSAGE);
+					_viewInsertAuthor.dispose();
+					_ViewInitialPage.SearchAfterActionAuthor();
+				} else {
+					JOptionPane.showMessageDialog(_viewInsertAuthor, "Ocorreu um erro ao Cadastrar, tente novamente",
+							"Cadastro de Autor", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -225,6 +263,7 @@ public class LivrariaController {
 		}
 	}
 	
+	
 
 	class SetActionTblPublisher implements MouseListener { 
 		
@@ -240,10 +279,75 @@ public class LivrariaController {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
 					if(button.getName() == "btnEditar" && e.getClickCount() == 1) {
-						Editora editora =  _ViewInitialPage.getEditoraBySelectedRow();
-						_viewUpdatePublisher = new viewUpdatePublisher();
-						_viewUpdatePublisher.SetDetails(editora);
+						Autor author =  _ViewInitialPage.getAuthorBySelectedRow();
+						_viewUpdateAuthor = new viewUpdateAuthor();
+						_viewUpdateAuthor.SetDetails(author);
 						_viewUpdatePublisher.SetActionBtnEdit(new EditPublishers());
+					}
+				}
+			}
+		}
+		@Override
+		public void mouseExited(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mousePressed(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseEntered(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(java.awt.event.MouseEvent e) {
+
+		}
+
+	}
+	class EditAuthors implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Autor author = _viewUpdateAuthor.getDetails();
+			
+			if (StringUtils.isEmpty(author.getName()) || StringUtils.isEmpty(author.getFname())) {
+				JOptionPane.showMessageDialog(_viewUpdateAuthor,
+						"Preencha todos os campos para seguir com a edição", "Edição de Autor",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(_viewUpdateAuthor, "Autor editado com sucesso",
+						"Edição de Autor", JOptionPane.INFORMATION_MESSAGE);
+				_viewUpdateAuthor.dispose();
+				_LivrariaDAO.EditAuthors(author);
+				_ViewInitialPage.SearchAfterActionAuthor();
+			}
+
+		}
+	}
+	
+
+	class SetActionTableAuthor implements MouseListener { 
+		
+		@Override
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			JTable tblAux = _ViewInitialPage.getTblAuthor();
+			int column = tblAux.getColumnModel().getColumnIndexAtX(e.getX());
+			int row = e.getY() / tblAux.getRowHeight();
+
+			if (row < tblAux.getRowCount() && row >= 0 && column < tblAux.getColumnCount() && column >= 0) {
+				Object value = tblAux.getValueAt(row, column);
+				if (value instanceof JButton) {
+					((JButton) value).doClick();
+					JButton button = (JButton) value;
+					if(button.getName() == "btnEditar" && e.getClickCount() == 1) {
+						Autor Autor =  _ViewInitialPage.getAuthorBySelectedRow();
+						_viewUpdateAuthor = new viewUpdateAuthor();
+						_viewUpdateAuthor.SetDetails(Autor);
+						_viewUpdateAuthor.SetActionBtnEdit(new EditAuthors());
 					}
 				}
 			}
