@@ -578,7 +578,10 @@ public class ViewInitialPage extends JFrame {
 
 		return new Livro(ISBN, Nome, Preco, Autores, Editora);
 	}
-
+	public String GetIsbnSelectedBook() {
+		int linhaSelectionada = tblLivros.getSelectedRow();
+		return  dtmBooks.getValueAt(linhaSelectionada, 0).toString();
+	}
 	public void SearchAfterActionPublisher() {
 		txtBuscaEditora.setText("");
 		btnPesquisaEditora.doClick();

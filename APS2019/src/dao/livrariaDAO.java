@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import model.Autor;
+import model.BooksAuthors;
 import model.Editora;
 import model.FiltroBuscaLivro;
 import model.Livro;
@@ -57,6 +58,58 @@ public class livrariaDAO {
 
 		return lstLivro;
 
+	}
+
+	public Livro GetLivroByIsbn(String isbn) {
+		Livro livro = null;
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "SELECT ISBN , TITLE, PRICE, PUBLISHER_ID FROM BOOKS WHERE ISBN = (?) ";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, isbn);
+			ResultSet rs = pstm.executeQuery();
+			while (rs.next()) {
+				livro = new Livro(rs.getString(1), rs.getString(2), rs.getDouble(3), rs.getInt(4));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return livro;
+
+	}
+	public Editora GetEditoraByID(int id) {
+		Editora editora = null;
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "SELECT PUBLISHER_ID, NAME,URL FROM PUBLISHERS WHERE PUBLISHER_ID = (?) ";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setInt(1, id);
+			ResultSet rs = pstm.executeQuery();
+			while(rs.next()) {
+				editora  = new Editora(rs.getInt(1), rs.getString(2),rs.getString(3));
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return editora;
+	}
+
+	public ArrayList<Autor> GetAuthorsByisbn(String isbn) {
+		ArrayList<Autor> lstAuthor = new ArrayList<Autor>();
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "SELECT AT.AUTHOR_ID, NAME, FNAME FROM AUTHORS  AT "
+					+ "JOIN BOOKSAUTHORS BKS ON BKS.AUTHOR_ID = AT.AUTHOR_ID " + "WHERE  BKS.ISBN = (?)";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, isbn);
+			ResultSet rs = pstm.executeQuery();
+
+			while (rs.next()) {
+				lstAuthor.add(new Autor(rs.getInt("AUTHOR_ID"), rs.getString("NAME"), rs.getString("FNAME")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lstAuthor;
 	}
 
 	public ArrayList<Autor> GetAuthorsByNome(String nome) {
@@ -144,7 +197,7 @@ public class livrariaDAO {
 			return false;
 		}
 	}
-	
+
 	public void InsertBook(Livro livro) {
 		try (Connection connection = SqlConnection.GetConnection()) {
 			final String sqlQuery = "INSERT INTO BOOKS (ISBN, TITLE,PUBLISHER_ID,PRICE) VALUES((?),(?),(?),(?))";
@@ -154,10 +207,53 @@ public class livrariaDAO {
 			pstm.setInt(3, livro.getEditoraID());
 			pstm.setDouble(4, livro.getPreco());
 			pstm.execute();
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void UpdateBook(Livro livro) {
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "UPDATE  BOOKS SET TITLE = (?), PRICE = (?), PUBLISHER_ID = (?) WHERE ISBN = (?)";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, livro.getNome());
+			pstm.setDouble(2, livro.getPreco());
+			pstm.setInt(3, livro.getEditoraID());
+			pstm.setString(4, livro.getIsbn());
+			pstm.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void InsertBookRelationTable(ArrayList<BooksAuthors> lstBooksAuthors) {
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "INSERT INTO BOOKSAUTHORS VALUES ((?),(?),(?))";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+
+			for (BooksAuthors books : lstBooksAuthors) {
+				pstm.setString(1, books.getIsbn());
+				pstm.setInt(2, books.getAuthorID());
+				pstm.setInt(3, books.getSeq_no());
+				pstm.addBatch();
+			}
+			pstm.executeBatch();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void DeleteRelationTableBooksByISBN(String isbn) {
+		try (Connection connection = SqlConnection.GetConnection()) {
+			final String sqlQuery = "DELETE FROM BOOKSAUTHORS WHERE ISBN = (?)";
+			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
+			pstm.setString(1, isbn);
+			pstm.execute();
+		}
+		 catch (SQLException e) {
+				e.printStackTrace();
+			}
 	}
 
 	public boolean EditPublisher(Editora pEditora) {
@@ -215,32 +311,29 @@ public class livrariaDAO {
 
 	public void DeleteBooksByAuthorID(int id) {
 		try (Connection connection = SqlConnection.GetConnection()) {
-			
-			final String sqlQuery = "DELETE FROM BOOKS " + 
-									"WHERE BOOKS.ISBN IN (SELECT ISBN FROM BOOKSAUTHORS WHERE AUTHOR_ID = (?))";
+
+			final String sqlQuery = "DELETE FROM BOOKS "
+					+ "WHERE BOOKS.ISBN IN (SELECT ISBN FROM BOOKSAUTHORS WHERE AUTHOR_ID = (?))";
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setInt(1, id);
 			pstm.execute();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void DeleteAuthorByAuthorID(int id) {
 		try (Connection connection = SqlConnection.GetConnection()) {
 			final String sqlQuery = "DELETE FROM AUTHORS WHERE AUTHOR_ID = (?)";
 			PreparedStatement pstm = connection.prepareStatement(sqlQuery);
 			pstm.setInt(1, id);
-			pstm.execute();	
-		}
-		catch (SQLException e) {
+			pstm.execute();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
 
 	public boolean DeletePublisherByID(int id) {
 		try (Connection connection = SqlConnection.GetConnection()) {

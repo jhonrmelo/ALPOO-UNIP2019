@@ -96,7 +96,12 @@ public class viewBookDetail extends JFrame {
 		contentPane.add(txtISBN);
 		txtISBN.setColumns(10);
 
-		tblAutores = new JTable(dtm);
+		tblAutores = new JTable(dtm){
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
 		tblAutores.setBounds(315, 163, 245, 38);
 		contentPane.add(tblAutores);
 

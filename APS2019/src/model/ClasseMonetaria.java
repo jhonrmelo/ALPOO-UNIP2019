@@ -10,12 +10,6 @@ public class ClasseMonetaria extends PlainDocument {
 	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 
 		String texto = getText(0, getLength());
-		for (int i = 0; i < str.length(); i++) {
-			char c = str.charAt(i);
-			if (!Character.isDigit(c)) {
-				return;
-			}
-		}
 
 		if (texto.length() < NUMERO_DIGITOS_MAXIMO) {
 			super.remove(0, getLength());

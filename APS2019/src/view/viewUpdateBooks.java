@@ -3,60 +3,55 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Vector;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.MaskFormatter;
-
-import org.apache.commons.lang3.StringUtils;
 
 import model.Autor;
 import model.ClasseMonetaria;
 import model.Editora;
 import model.Item;
-import model.JtableButton;
 import model.Livro;
-import model.RenderTable;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Vector;
+public class viewUpdateBooks extends JFrame {
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ImageIcon;
-
-public class viewInsertBooks extends JFrame {
-
-	private JPanel contentPane;
 	private JTextField txtNome;
 	JComboBox cbbEditora;
 	JComboBox cbbAutor;
 	JButton btnSelecionarAutor;
 	private DefaultTableModel dtmAutor;
 	private JTextField txtIsbn;
-	JButton btnCadastrar;
+	JButton btnAtualizar;
 	JTextField txtpreco;
 	private JTable tblAutor;
+	private JPanel contentPane;
 
-	public viewInsertBooks() {
+	public viewUpdateBooks() {
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(viewInsertBooks.class.getResource("/imgs/Book-Blank-Book-icon.png")));
-		setTitle("Cadastro de Livros");
+		setTitle("Edi\u00E7\u00E3o de Livros");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 457, 487);
 		contentPane = new JPanel();
@@ -84,11 +79,11 @@ public class viewInsertBooks extends JFrame {
 		lblPreo.setBounds(319, 68, 48, 14);
 		contentPane.add(lblPreo);
 
-		txtpreco = new JTextField("0");
-		txtpreco.setDocument(new ClasseMonetaria());
+		txtpreco = new JTextField();
 		txtpreco.setBounds(319, 88, 96, 20);
 		contentPane.add(txtpreco);
 		txtpreco.setColumns(10);
+		
 
 		JLabel lblEditora = new JLabel("Editora");
 		lblEditora.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -130,11 +125,11 @@ public class viewInsertBooks extends JFrame {
 		setLocation(x, y);
 		setLocationRelativeTo(null);
 
-		btnCadastrar = new JButton("Cadastrar");
-		btnCadastrar.setIcon(new ImageIcon(viewInsertBooks.class.getResource("/imgs/add.png")));
-		btnCadastrar.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnCadastrar.setBounds(296, 412, 119, 23);
-		contentPane.add(btnCadastrar);
+		btnAtualizar = new JButton("Atualizar");
+		btnAtualizar.setIcon(new ImageIcon(viewUpdateBooks.class.getResource("/imgs/edit.png")));
+		btnAtualizar.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnAtualizar.setBounds(286, 400, 129, 35);
+		contentPane.add(btnAtualizar);
 
 		JLabel lblIsbn = new JLabel("ISBN");
 		lblIsbn.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -142,6 +137,7 @@ public class viewInsertBooks extends JFrame {
 		contentPane.add(lblIsbn);
 
 		txtIsbn = new JTextField();
+		txtIsbn.setEditable(false);
 		txtIsbn.setBounds(27, 88, 282, 20);
 		contentPane.add(txtIsbn);
 		txtIsbn.setColumns(10);
@@ -181,6 +177,23 @@ public class viewInsertBooks extends JFrame {
 		cbbEditora.setSelectedIndex(0);
 
 	}
+	public void SetDetails(Livro livro, Item item) {
+		txtNome.setText(livro.getNome().trim());
+		txtIsbn.setText(livro.getIsbn());
+		txtpreco.setText(String.valueOf(livro.getPreco()));
+		cbbEditora.getModel().setSelectedItem(item);
+	}
+
+	public void SetAuthorsTable(ArrayList<Autor> lstAuthor) {
+
+		for (Autor autor : lstAuthor) {
+			Object[] dados = new Object[2];
+			dados[0] = autor.getAuthorID();
+			dados[1] = autor.getName();
+			dtmAutor.addRow(dados);
+		}
+
+	}
 
 	public Item GetSelectedAuthor() {
 		return (Item) cbbAutor.getSelectedItem();
@@ -199,17 +212,6 @@ public class viewInsertBooks extends JFrame {
 
 	}
 
-	public ArrayList<Integer> GetIDsAuthors() {
-		ArrayList<Integer> idsInseridos = new ArrayList<Integer>();
-		int rows = dtmAutor.getRowCount();
-
-		for (int i = 0; i < rows; i++) {
-			idsInseridos.add((int) dtmAutor.getValueAt(i, 0));
-		}
-		return idsInseridos;
-
-	}
-
 	public int GetSelectedRow() {
 		return tblAutor.getSelectedRow();
 	}
@@ -222,8 +224,19 @@ public class viewInsertBooks extends JFrame {
 		btnSelecionarAutor.addActionListener(act);
 	}
 
-	public void AddActionBtnCadastrar(ActionListener act) {
-		btnCadastrar.addActionListener(act);
+	public ArrayList<Integer> GetIDsAuthors() {
+		ArrayList<Integer> idsInseridos = new ArrayList<Integer>();
+		int rows = dtmAutor.getRowCount();
+
+		for (int i = 0; i < rows; i++) {
+			idsInseridos.add((int) dtmAutor.getValueAt(i, 0));
+		}
+		return idsInseridos;
+
+	}
+
+	public void AddActionBtnEditar(ActionListener act) {
+		btnAtualizar.addActionListener(act);
 	}
 
 	public String getIsbnToInsert() {

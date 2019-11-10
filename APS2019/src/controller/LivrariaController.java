@@ -25,6 +25,7 @@ import com.sun.net.httpserver.Authenticator.Success;
 import controller.LivrariaController.SetActionTblPublisher;
 import dao.livrariaDAO;
 import model.Autor;
+import model.BooksAuthors;
 import model.Editora;
 import model.FiltroBuscaLivro;
 import model.Item;
@@ -35,6 +36,7 @@ import view.viewInsertAuthor;
 import view.viewInsertBooks;
 import view.viewInsertPublisher;
 import view.viewUpdateAuthor;
+import view.viewUpdateBooks;
 import view.viewUpdatePublisher;
 
 public class LivrariaController {
@@ -47,6 +49,7 @@ public class LivrariaController {
 	private viewInsertAuthor _viewInsertAuthor;
 	private viewUpdateAuthor _viewUpdateAuthor;
 	private viewInsertBooks _viewInsertBooks;
+	private viewUpdateBooks _viewUpdateBooks;
 	String[] options;
 
 	public LivrariaController() {
@@ -155,6 +158,22 @@ public class LivrariaController {
 							_ViewInitialPage.SearchAfterActionBooks();
 						}
 					}
+					else if (button.getName() == "btnEditar") {
+						String isbn = _ViewInitialPage.GetIsbnSelectedBook();
+						_viewUpdateBooks = new viewUpdateBooks();
+						ArrayList<Editora> Editoras = _LivrariaDAO.GetEditoraToCombobox();
+						ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();
+						 _viewUpdateBooks.LoadComboboxSearch(Editoras, Autores);
+						
+						Livro livro = _LivrariaDAO.GetLivroByIsbn(isbn);
+						ArrayList<Autor> lstAuthor = _LivrariaDAO.GetAuthorsByisbn(isbn);
+						Editora editora = _LivrariaDAO.GetEditoraByID(livro.getEditoraID());
+						_viewUpdateBooks.SetActionTblAutor(new RemoveAuthorsTblAuthorsUpdate());
+						_viewUpdateBooks.AddActionBtnSelecionar(new AddAuthorInTableUpdate());
+						_viewUpdateBooks.AddActionBtnEditar(new UpdateBooks());
+						_viewUpdateBooks.SetDetails(livro, new Item(editora.getPublisher_id(),editora.getName()));
+						_viewUpdateBooks.SetAuthorsTable(lstAuthor);
+					}
 				}
 			}
 		}
@@ -197,7 +216,6 @@ public class LivrariaController {
 
 			_viewInsertAuthor = new viewInsertAuthor();
 			_viewInsertAuthor.SetActionListenerBtnCadastrar(new InsertAuthor());
-		
 
 		}
 	}
@@ -212,6 +230,7 @@ public class LivrariaController {
 			_viewInsertBooks.LoadComboboxSearch(Editoras, Autores);
 			_viewInsertBooks.AddActionBtnSelecionar(new AddAuthorInTable());
 			_viewInsertBooks.AddActionBtnCadastrar(new InsertBooks());
+			_viewInsertBooks.SetActionTblAutor(new RemoveAuthorsTblAuthors());
 		}
 	}
 
@@ -421,14 +440,61 @@ public class LivrariaController {
 
 		}
 	}
+
 	class AddAuthorInTable implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Item item = _viewInsertBooks.GetSelectedAuthor();
-			_viewInsertBooks.InsertAuthorInTabel(item.getId(), item.getDescription());
+			if (item.getId() != 0) {
+				boolean inserted = false;
+				ArrayList<Integer> idsInseridos = _viewInsertBooks.GetIDsAuthors();
+				for (Integer i : idsInseridos) {
+					if (i == item.getId()) {
+						inserted = true;
+					}
+				}
+				if (inserted) {
+					JOptionPane.showMessageDialog(_viewInsertBooks,
+							"Este autor já foi selecionado, escolha outras opções!", "Cadastro de Livro",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					_viewInsertBooks.InsertAuthorInTabel(item.getId(), item.getDescription());
+				}
+			} else {
+				JOptionPane.showMessageDialog(_viewInsertBooks, "É necessário selecionar um autor válido!",
+						"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+			}
+
 		}
 	}
-	
+	class AddAuthorInTableUpdate implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Item item = _viewUpdateBooks.GetSelectedAuthor();
+			if (item.getId() != 0) {
+				boolean inserted = false;
+				ArrayList<Integer> idsInseridos = _viewUpdateBooks.GetIDsAuthors();
+				for (Integer i : idsInseridos) {
+					if (i == item.getId()) {
+						inserted = true;
+					}
+				}
+				if (inserted) {
+					JOptionPane.showMessageDialog(_viewUpdateBooks,
+							"Este autor já foi selecionado, escolha outras opções!", "Edição de Livro",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					_viewUpdateBooks.InsertAuthorInTabel(item.getId(), item.getDescription());
+				}
+			} else {
+				JOptionPane.showMessageDialog(_viewUpdateBooks, "É necessário selecionar um autor válido!",
+						"Edição de Livro", JOptionPane.INFORMATION_MESSAGE);
+			}
+
+		}
+
+	}
+
 	class InsertBooks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -436,22 +502,147 @@ public class LivrariaController {
 			String isbn = _viewInsertBooks.getIsbnToInsert();
 			String Preco = _viewInsertBooks.getPrecoToInsert();
 			int EditoraID = _viewInsertBooks.getEditoraIDToInsert();
-			
-			if(StringUtils.isEmpty(nome) || StringUtils.isEmpty(isbn) || StringUtils.isEmpty(Preco)) {
+			ArrayList<BooksAuthors> lstBooksAuthors = new ArrayList<BooksAuthors>();
+			ArrayList<Integer> AuthorsIDs = _viewInsertBooks.GetIDsAuthors();
+			int auxiliar = 1;
+
+			if (!StringUtils.isEmpty(nome) && !StringUtils.isEmpty(isbn) && !StringUtils.isEmpty(Preco)) {
+				if (EditoraID != 0) {
+					if (AuthorsIDs.size() > 0) {
+						//Caso todas as validações passem
+						Livro livro = new Livro(isbn, nome, Double.parseDouble(Preco.replace(",", ".")), EditoraID);
+						_LivrariaDAO.InsertBook(livro);
+
+						for (Integer i : AuthorsIDs) {
+							lstBooksAuthors.add(new BooksAuthors(isbn, i, auxiliar));
+							auxiliar++;
+						}
+						_LivrariaDAO.InsertBookRelationTable(lstBooksAuthors);
+						
+						JOptionPane.showMessageDialog(_viewInsertBooks, "Livro cadastrado com sucesso!",
+								"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+						_viewInsertBooks.dispose();
+						_ViewInitialPage.SearchAfterActionBooks();
+					} else {
+						JOptionPane.showMessageDialog(_viewInsertBooks, "É necessário selecionar ao menos um autor!",
+								"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(_viewInsertBooks, "É preciso selecionar ao menos uma editora",
+							"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			} else {
 				JOptionPane.showMessageDialog(_viewInsertBooks, "Preencha todos os campos para seguir com a inserção",
 						"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
 			}
-			if(EditoraID == 0) {
-				JOptionPane.showMessageDialog(_viewInsertBooks, "É preciso selecionar ao menos uma editora",
-						"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
-			}
-			
-			Livro livro = new Livro(isbn,nome,Double.parseDouble(Preco.replace(",", ".")),EditoraID);
-			
-			_LivrariaDAO.InsertBook(livro);
-		}	
+		}
 	}
 	
+	class UpdateBooks implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String nome = _viewUpdateBooks.getNomeToInsert();
+			String isbn = _viewUpdateBooks.getIsbnToInsert();
+			String Preco = _viewUpdateBooks.getPrecoToInsert();
+			int EditoraID = _viewUpdateBooks.getEditoraIDToInsert();
+			ArrayList<BooksAuthors> lstBooksAuthors = new ArrayList<BooksAuthors>();
+			ArrayList<Integer> AuthorsIDs = _viewUpdateBooks.GetIDsAuthors();
+			int auxiliar = 1;
+
+			if (!StringUtils.isEmpty(nome) && !StringUtils.isEmpty(isbn) && !StringUtils.isEmpty(Preco)) {
+				if (EditoraID != 0) {
+					if (AuthorsIDs.size() > 0) {
+						//Caso todas as validações passem
+						Livro livro = new Livro(isbn, nome, Double.parseDouble(Preco.replace(",", ".")), EditoraID);
+						_LivrariaDAO.UpdateBook(livro);
+
+						for (Integer i : AuthorsIDs) {
+							lstBooksAuthors.add(new BooksAuthors(isbn, i, auxiliar));
+							auxiliar++;
+						}
+						_LivrariaDAO.DeleteRelationTableBooksByISBN(isbn);
+						_LivrariaDAO.InsertBookRelationTable(lstBooksAuthors);
+						
+						JOptionPane.showMessageDialog(_viewUpdateBooks, "Livro Alterado com sucesso!",
+								"Edição de Livro", JOptionPane.INFORMATION_MESSAGE);
+						_viewUpdateBooks.dispose();
+						_ViewInitialPage.SearchAfterActionBooks();
+					} else {
+						JOptionPane.showMessageDialog(_viewUpdateBooks, "É necessário selecionar ao menos um autor!",
+								"Edição de Livro", JOptionPane.INFORMATION_MESSAGE);
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(_viewUpdateBooks, "É preciso selecionar ao menos uma editora",
+							"Edição de Livro", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			} else {
+				JOptionPane.showMessageDialog(_viewUpdateBooks, "Preencha todos os campos para seguir com a edição",
+						"Edição de Livro", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+		}
+	}
+
+	class RemoveAuthorsTblAuthors implements MouseListener {
+		@Override
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				int rowToremove = _viewInsertBooks.GetSelectedRow();
+				_viewInsertBooks.RemoveRow(rowToremove);
+			}
+
+		}	
+		@Override
+		public void mouseEntered(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseExited(java.awt.event.MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(java.awt.event.MouseEvent e) {
+
+		}
+	}
+	class RemoveAuthorsTblAuthorsUpdate implements MouseListener {
+		@Override
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				int rowToremove = _viewUpdateBooks.GetSelectedRow();
+				_viewUpdateBooks.RemoveRow(rowToremove);
+			}
+
+		}	
+		@Override
+		public void mouseEntered(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseExited(java.awt.event.MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(java.awt.event.MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(java.awt.event.MouseEvent e) {
+
+		}
+	}
 
 
 }
