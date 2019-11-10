@@ -1,0 +1,6 @@
+
+CREATE TRIGGER booksrelationshipdelete
+    BEFORE DELETE
+    ON public.authors
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.deletebooksfromrelationshiptablebyautorid();

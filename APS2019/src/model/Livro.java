@@ -6,6 +6,7 @@ public class Livro {
 	private double Preco;
 	private String Autor;
 	private String Editora;
+	private int EditoraID;
 	
 	
 	public Livro(String pIsbn,String pNome, double pPreco, String pAutor, String pEditora) {
@@ -16,12 +17,27 @@ public class Livro {
 		Autor = pAutor;
 		Editora = pEditora;
 	}
+	
+	public Livro(String pIsbn,String pNome, double pPreco, int pEditoraID) {
+		isbn = pIsbn;
+		Nome  = pNome;
+		Preco = pPreco;
+		EditoraID = pEditoraID;
+	}
 
 
 	public String getIsbn() {
 		return isbn;
 	}
 
+
+	public int getEditoraID() {
+		return EditoraID;
+	}
+
+	public void setEditoraID(int editoraID) {
+		EditoraID = editoraID;
+	}
 
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;

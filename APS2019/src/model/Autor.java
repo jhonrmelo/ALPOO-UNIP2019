@@ -37,5 +37,8 @@ public class Autor {
 		this.fname = fname;
 	}
 	
+	public String GetFullName() {
+		return fname.trim() + " " + name.trim();
+	}
 	
 }

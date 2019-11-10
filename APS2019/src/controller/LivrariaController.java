@@ -32,10 +32,10 @@ import model.Livro;
 import view.ViewInitialPage;
 import view.viewBookDetail;
 import view.viewInsertAuthor;
+import view.viewInsertBooks;
 import view.viewInsertPublisher;
 import view.viewUpdateAuthor;
 import view.viewUpdatePublisher;
-
 
 public class LivrariaController {
 
@@ -46,13 +46,14 @@ public class LivrariaController {
 	private viewUpdatePublisher _viewUpdatePublisher;
 	private viewInsertAuthor _viewInsertAuthor;
 	private viewUpdateAuthor _viewUpdateAuthor;
+	private viewInsertBooks _viewInsertBooks;
 	String[] options;
 
 	public LivrariaController() {
 		options = new String[2];
 		options[0] = new String("Sim");
 		options[1] = new String("Não");
-		
+
 		_ViewInitialPage = new ViewInitialPage();
 		_LivrariaDAO = new livrariaDAO();
 		_ViewInitialPage.SetChangeCardAction(new SetCardVisible());
@@ -62,11 +63,12 @@ public class LivrariaController {
 		_ViewInitialPage.SetActionlistenerSearchButtonPublisher(new SearchPublishers());
 		_ViewInitialPage.AddActionListenerBtnInsertEditora(new OpenViewInsertPublisher());
 		ArrayList<Editora> Editoras = _LivrariaDAO.GetEditoraToCombobox();
-		ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();		
+		ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();
 		_ViewInitialPage.LoadComboboxSearch(Editoras, Autores);
 		_ViewInitialPage.SetActionTableButtonPublisher(new SetActionTblPublisher());
 		_ViewInitialPage.SetActionTableButtonAuthor(new SetActionTableAuthor());
 		_ViewInitialPage.AddActionListenerBtnInsertAuthor(new OpenViewInsertAuthor());
+		_ViewInitialPage.AddActionListenerBtnInsertBook(new OpenViewInsertBook());
 
 	}
 
@@ -148,6 +150,8 @@ public class LivrariaController {
 						if (resposta == JOptionPane.YES_OPTION) {
 							Livro llivro = _ViewInitialPage.getLivroBySelectedRow();
 							_LivrariaDAO.DeleteBookByISBN(llivro.getIsbn());
+							JOptionPane.showMessageDialog(_viewInsertPublisher, "Livro Excluído com sucesso",
+									"Exclusão de livros", JOptionPane.INFORMATION_MESSAGE);
 							_ViewInitialPage.SearchAfterActionBooks();
 						}
 					}
@@ -186,14 +190,28 @@ public class LivrariaController {
 
 		}
 	}
-	
+
 	class OpenViewInsertAuthor implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			_viewInsertAuthor = new viewInsertAuthor();
 			_viewInsertAuthor.SetActionListenerBtnCadastrar(new InsertAuthor());
+		
 
+		}
+	}
+
+	class OpenViewInsertBook implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			_viewInsertBooks = new viewInsertBooks();
+			ArrayList<Editora> Editoras = _LivrariaDAO.GetEditoraToCombobox();
+			ArrayList<Autor> Autores = _LivrariaDAO.GetAutoresToCombobox();
+			_viewInsertBooks.LoadComboboxSearch(Editoras, Autores);
+			_viewInsertBooks.AddActionBtnSelecionar(new AddAuthorInTable());
+			_viewInsertBooks.AddActionBtnCadastrar(new InsertBooks());
 		}
 	}
 
@@ -219,15 +237,15 @@ public class LivrariaController {
 			}
 		}
 	}
+
 	class InsertAuthor implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Autor author = _viewInsertAuthor.GetAuthor();
 
 			if (StringUtils.isEmpty(author.getName()) || StringUtils.isEmpty(author.getFname())) {
-				JOptionPane.showMessageDialog(_viewInsertAuthor,
-						"Preencha todos os campos para seguir com o Cadastro", "Cadastro de Autor",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(_viewInsertAuthor, "Preencha todos os campos para seguir com o Cadastro",
+						"Cadastro de Autor", JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				if (_LivrariaDAO.InsertAuthor(author)) {
 					JOptionPane.showMessageDialog(_viewInsertAuthor, "Autor Cadastrado com sucesso",
@@ -246,15 +264,13 @@ public class LivrariaController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Editora publisher = _viewUpdatePublisher.getDetails();
-			
+
 			if (StringUtils.isEmpty(publisher.getName()) || StringUtils.isEmpty(publisher.getUrl())) {
-				JOptionPane.showMessageDialog(_viewUpdatePublisher,
-						"Preencha todos os campos para seguir com a edição", "Edição de Editora",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(_viewUpdatePublisher, "Editora editada com sucesso",
+				JOptionPane.showMessageDialog(_viewUpdatePublisher, "Preencha todos os campos para seguir com a edição",
 						"Edição de Editora", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(_viewUpdatePublisher, "Editora editada com sucesso", "Edição de Editora",
+						JOptionPane.INFORMATION_MESSAGE);
 				_viewUpdatePublisher.dispose();
 				_LivrariaDAO.EditPublisher(publisher);
 				_ViewInitialPage.SearchAfterActionPublisher();
@@ -262,11 +278,9 @@ public class LivrariaController {
 
 		}
 	}
-	
-	
 
-	class SetActionTblPublisher implements MouseListener { 
-		
+	class SetActionTblPublisher implements MouseListener {
+
 		@Override
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			JTable tblAux = _ViewInitialPage.getTblPublisher();
@@ -278,15 +292,29 @@ public class LivrariaController {
 				if (value instanceof JButton) {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
-					if(button.getName() == "btnEditar" && e.getClickCount() == 1) {
-						Autor author =  _ViewInitialPage.getAuthorBySelectedRow();
-						_viewUpdateAuthor = new viewUpdateAuthor();
-						_viewUpdateAuthor.SetDetails(author);
+					if (button.getName() == "btnEditar" && e.getClickCount() == 1) {
+						Editora editora = _ViewInitialPage.getEditoraBySelectedRow();
+						_viewUpdatePublisher = new viewUpdatePublisher();
+						_viewUpdatePublisher.SetDetails(editora);
 						_viewUpdatePublisher.SetActionBtnEdit(new EditPublishers());
+					} else if (button.getName() == "btnExcluir" && e.getClickCount() == 1) {
+
+						int resposta = JOptionPane.showOptionDialog(_ViewInitialPage, "Deseja excluir esta Editora?",
+								"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+								options, null);
+						if (resposta == JOptionPane.YES_OPTION) {
+							Editora editora = _ViewInitialPage.getEditoraBySelectedRow();
+							_LivrariaDAO.DeletePublisherByID(editora.getPublisher_id());
+							JOptionPane.showMessageDialog(_viewInsertPublisher, "Editora Excluída com sucesso",
+									"Exclusão de editora", JOptionPane.INFORMATION_MESSAGE);
+							_ViewInitialPage.SearchAfterActionPublisher();
+						}
+
 					}
 				}
 			}
 		}
+
 		@Override
 		public void mouseExited(java.awt.event.MouseEvent e) {
 
@@ -308,19 +336,18 @@ public class LivrariaController {
 		}
 
 	}
+
 	class EditAuthors implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Autor author = _viewUpdateAuthor.getDetails();
-			
+
 			if (StringUtils.isEmpty(author.getName()) || StringUtils.isEmpty(author.getFname())) {
-				JOptionPane.showMessageDialog(_viewUpdateAuthor,
-						"Preencha todos os campos para seguir com a edição", "Edição de Autor",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(_viewUpdateAuthor, "Autor editado com sucesso",
+				JOptionPane.showMessageDialog(_viewUpdateAuthor, "Preencha todos os campos para seguir com a edição",
 						"Edição de Autor", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(_viewUpdateAuthor, "Autor editado com sucesso", "Edição de Autor",
+						JOptionPane.INFORMATION_MESSAGE);
 				_viewUpdateAuthor.dispose();
 				_LivrariaDAO.EditAuthors(author);
 				_ViewInitialPage.SearchAfterActionAuthor();
@@ -328,10 +355,9 @@ public class LivrariaController {
 
 		}
 	}
-	
 
-	class SetActionTableAuthor implements MouseListener { 
-		
+	class SetActionTableAuthor implements MouseListener {
+
 		@Override
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			JTable tblAux = _ViewInitialPage.getTblAuthor();
@@ -343,15 +369,38 @@ public class LivrariaController {
 				if (value instanceof JButton) {
 					((JButton) value).doClick();
 					JButton button = (JButton) value;
-					if(button.getName() == "btnEditar" && e.getClickCount() == 1) {
-						Autor Autor =  _ViewInitialPage.getAuthorBySelectedRow();
+					if (button.getName() == "btnEditar" && e.getClickCount() == 1) {
+						Autor Autor = _ViewInitialPage.getAuthorBySelectedRow();
 						_viewUpdateAuthor = new viewUpdateAuthor();
 						_viewUpdateAuthor.SetDetails(Autor);
 						_viewUpdateAuthor.SetActionBtnEdit(new EditAuthors());
+					} else if (button.getName() == "btnExcluir" && e.getClickCount() == 1) {
+						int resposta = JOptionPane.showOptionDialog(_ViewInitialPage, "Deseja excluir este autor?",
+								"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+								options, null);
+						if (resposta == JOptionPane.YES_OPTION) {
+							Autor autor = _ViewInitialPage.getAuthorBySelectedRow();
+							int respostabook = JOptionPane.showOptionDialog(_ViewInitialPage,
+									"Deseja excluir os livros relacionados a esse autor?(Se ele for um autor unico será excluído automaticamente)",
+									"Exclusão", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+									options, null);
+							if (respostabook == JOptionPane.YES_OPTION) {
+
+								_LivrariaDAO.DeleteBooksByAuthorID(autor.getAuthorID());
+								_LivrariaDAO.DeleteAuthorByAuthorID(autor.getAuthorID());
+							} else {
+								_LivrariaDAO.DeleteAuthorByAuthorID(autor.getAuthorID());
+								;
+							}
+							JOptionPane.showMessageDialog(_viewInsertPublisher, "Autor Excluído com sucesso",
+									"Exclusão de editora", JOptionPane.INFORMATION_MESSAGE);
+							_ViewInitialPage.SearchAfterActionAuthor();
+						}
 					}
 				}
 			}
 		}
+
 		@Override
 		public void mouseExited(java.awt.event.MouseEvent e) {
 
@@ -371,8 +420,38 @@ public class LivrariaController {
 		public void mouseReleased(java.awt.event.MouseEvent e) {
 
 		}
-
 	}
+	class AddAuthorInTable implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Item item = _viewInsertBooks.GetSelectedAuthor();
+			_viewInsertBooks.InsertAuthorInTabel(item.getId(), item.getDescription());
+		}
+	}
+	
+	class InsertBooks implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String nome = _viewInsertBooks.getNomeToInsert();
+			String isbn = _viewInsertBooks.getIsbnToInsert();
+			String Preco = _viewInsertBooks.getPrecoToInsert();
+			int EditoraID = _viewInsertBooks.getEditoraIDToInsert();
+			
+			if(StringUtils.isEmpty(nome) || StringUtils.isEmpty(isbn) || StringUtils.isEmpty(Preco)) {
+				JOptionPane.showMessageDialog(_viewInsertBooks, "Preencha todos os campos para seguir com a inserção",
+						"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+			}
+			if(EditoraID == 0) {
+				JOptionPane.showMessageDialog(_viewInsertBooks, "É preciso selecionar ao menos uma editora",
+						"Cadastro de Livro", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+			Livro livro = new Livro(isbn,nome,Double.parseDouble(Preco.replace(",", ".")),EditoraID);
+			
+			_LivrariaDAO.InsertBook(livro);
+		}	
+	}
+	
 
 
 }

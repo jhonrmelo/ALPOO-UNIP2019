@@ -418,13 +418,15 @@ public class ViewInitialPage extends JFrame {
 		tblAutores.addMouseListener(msa);
 	}
 	
-	
 
 	public void AddActionListenerBtnInsertEditora(ActionListener act) {
 		btnCadastrarEditora.addActionListener(act);
 	}
 	public void AddActionListenerBtnInsertAuthor (ActionListener act) {
 		btnCadastrarAutor.addActionListener(act);
+	}
+	public void AddActionListenerBtnInsertBook (ActionListener act) {
+		btnCadastrar.addActionListener(act);
 	}
 
 	public void MontaTableLivros(ArrayList<Livro> lstLivros) {
@@ -516,6 +518,7 @@ public class ViewInitialPage extends JFrame {
 
 		tblEditora.getColumnModel().getColumn(3).setPreferredWidth(10);
 		tblEditora.getColumnModel().getColumn(4).setPreferredWidth(10);
+	
 
 		dtmPublisher.setNumRows(0);
 
@@ -605,7 +608,7 @@ public class ViewInitialPage extends JFrame {
 
 		
 		for(Autor _autor : Autores) {
-			modelCbbAutor.add(new Item(_autor.getAuthorID(), _autor.getFname()));
+			modelCbbAutor.add(new Item(_autor.getAuthorID(), _autor.GetFullName()));
 		}
 		
 		for (Editora _editora : Editoras) {
